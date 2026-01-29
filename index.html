@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chavos Burger - Menú Digital Premium</title>
+
+    <!-- Google Fonts - Tipografía distintiva -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Righteous&family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- HERO BANNER -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <h1 class="hero-title">Chavos Burger</h1>
+        <p class="hero-subtitle">se me chispoteó... pero de lo rica 😋</p>
+        <div class="hero-buttons">
+          <a href="#burgers" class="btn-hero">Ver Menú</a>
+          <button class="btn-hero btn-cart-toggle" onclick="toggleCarrito()">
+            🛒 Carrito <span class="cart-count" id="cart-count">0</span>
+          </button>
+        </div>
+      </div>
+      <div class="hero-scroll-indicator">
+        <span>Desliza para ver productos</span>
+        <div class="scroll-arrow">↓</div>
+      </div>
+    </section>
+
+    <!-- NAVEGACIÓN STICKY -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="#burgers" class="nav-link">🍔 Burgers</a>
+        <a href="#perros" class="nav-link">🌭 Perros</a>
+        <a href="#salchipapas" class="nav-link">🍟 Salchipapas</a>
+        <a href="#delicias-chavos" class="nav-link">✨ Delicias</a>
+        <a href="#sandwich" class="nav-link">🥪 Sándwich</a>
+        <a href="#desgranados" class="nav-link">🌽 Desgranados</a>
+      </div>
+    </nav>
+    <!-- BOTÓN DE CARRITO FIJO SUPERIOR -->
+    <button
+      id="cart-fixed-btn"
+      class="cart-fixed-btn"
+      onclick="toggleCarrito()"
+    >
+      <span class="cart-icon">🛒</span>
+      <span class="cart-badge" id="cart-badge-top">0</span>
+    </button>
+
+    <!-- BUSCADOR Y FILTROS -->
+    <section class="search-filter-section">
+      <div class="container">
+        <div class="search-box">
+          <input
+            type="text"
+            id="buscador"
+            placeholder="🔍 Busca tu producto favorito..."
+          />
+        </div>
+
+        <div class="filters">
+          <button class="filter-btn active" data-filter="todos">Todos</button>
+          <button class="filter-btn" data-filter="economico">
+            💰 Hasta $20.000
+          </button>
+          <button class="filter-btn" data-filter="medio">
+            💵 $20.000 - $30.000
+          </button>
+          <button class="filter-btn" data-filter="premium">
+            💎 Más de $30.000
+          </button>
+        </div>
+
+        <p id="resultado-busqueda" class="search-result"></p>
+      </div>
+    </section>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="main-content">
+      <!-- SECCIÓN: BURGERS -->
+      <section id="burgers" class="menu-section" data-section="burgers">
+        <div class="section-header">
+          <img src="images/icon-burgers.png" alt="Burgers" class="section-icon" />
+          <div>
+            <h2 class="section-title">Burgers</h2>
+            <p class="section-subtitle">Acompañadas con papas a la francesa</p>
+          </div>
+        </div>
+
+        <div class="products-grid">
+          <!-- Producto 1 -->
+          <article
+            class="product-card"
+            data-price="18000"
+            data-category="economico"
+          >
+            <div class="product-badge nuevo">NUEVO</div>
+            <h3 class="product-name">Vecindad</h3>
+            <p class="product-description">
+              Carne 150gr, lechuga, tomate, cebolla, queso
+            </p>
+            <p class="product-price">$18.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 2 -->
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <div class="product-badge popular">POPULAR</div>
+            <h3 class="product-name">Doña Clotilde</h3>
+            <p class="product-description">
+              Carne 150gr, pollo desmechado, queso, lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 3 -->
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Jaimito</h3>
+            <p class="product-description">
+              Carne 150gr, tocineta, huevo, queso, lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 4 -->
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Chilindrina</h3>
+            <p class="product-description">
+              Carne 150gr, 2 tocinetas, queso, lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 5 -->
+          <article
+            class="product-card"
+            data-price="23000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Chapulín</h3>
+            <p class="product-description">
+              Carne 150gr, pollo desmechado, tocineta, queso, lechuga, tomate,
+              cebolla
+            </p>
+            <p class="product-price">$23.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 6 -->
+          <article
+            class="product-card"
+            data-price="23000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Dr Chapatin</h3>
+            <p class="product-description">
+              Carne 150gr, pollo desmechado, salchicha americana, queso,
+              lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$23.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 7 -->
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Popis</h3>
+            <p class="product-description">
+              Carne 150gr, pollo desmechado, chorizo artesanal, tocineta, maíz,
+              queso, lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 8 -->
+          <article
+            class="product-card"
+            data-price="26000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Don Barriga</h3>
+            <p class="product-description">
+              Doble carne 150gr, tocineta, queso, lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$26.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 9 -->
+          <article
+            class="product-card"
+            data-price="29000"
+            data-category="medio"
+          >
+            <h3 class="product-name">La Minina</h3>
+            <p class="product-description">
+              Doble carne 150gr, doble pollo desmechado, queso, lechuga, tomate,
+              cebolla
+            </p>
+            <p class="product-price">$29.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 10 -->
+          <article
+            class="product-card"
+            data-price="29000"
+            data-category="medio"
+          >
+            <div class="product-badge recomendado">⭐ RECOMENDADO</div>
+            <h3 class="product-name">Chavos</h3>
+            <p class="product-description">
+              Carne 150gr, carne desmechada, chorizo, tocineta, nachos,
+              jalapeños, guacamole, queso, lechuga, tomate, cebolla
+            </p>
+            <p class="product-price">$29.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <!-- Producto 11 -->
+          <article
+            class="product-card"
+            data-price="33000"
+            data-category="premium"
+          >
+            <div class="product-badge premium-badge">👑 PREMIUM</div>
+            <h3 class="product-name">Godines</h3>
+            <p class="product-description">
+              Doble carne 150gr, carne desmechada, pollo desmechado, tocineta,
+              queso, aros de cebolla, chorizo artesanal, lechuga, tomate,
+              cebolla
+            </p>
+            <p class="product-price">$33.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: PERROS -->
+      <section id="perros" class="menu-section" data-section="perros">
+        <div class="section-header">
+          <img src="images/icon-perros.png" alt="Perros" class="section-icon" />
+          <div>
+            <h2 class="section-title">Perros</h2>
+            <p class="section-subtitle">Acompañados con papas a la francesa</p>
+          </div>
+        </div>
+
+        <div class="products-grid">
+          <article
+            class="product-card"
+            data-price="16000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Vecindad</h3>
+            <p class="product-description">
+              Salchicha americana, queso fundido, cebolla, papitas chips
+            </p>
+            <p class="product-price">$16.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="18000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Kiko</h3>
+            <p class="product-description">
+              Salchicha americana, pollo desmechado, tocineta, queso, cebolla
+            </p>
+            <p class="product-price">$18.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Don Ramón</h3>
+            <p class="product-description">
+              Salchicha americana, pollo desmechado, carne en cuadritos, queso,
+              cebolla
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="22000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Perro Bacon 33CM</h3>
+            <p class="product-description">
+              Salchicha americana X2, queso costeño, tocineta picada, papitas
+              chips, cebolla
+            </p>
+            <p class="product-price">$22.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Ñoño 33CM XXL</h3>
+            <p class="product-description">
+              Salchicha americana X2, carne desmechada, pollo desmechado, queso,
+              maíz, tocineta, cebolla
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Peterete</h3>
+            <p class="product-description">
+              2 salchichas americanas, pollo desmechado, pepperoni, queso,
+              cebolla
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="28000"
+            data-category="medio"
+          >
+            <div class="product-badge popular">POPULAR</div>
+            <h3 class="product-name">Chimostrufia 33CM</h3>
+            <p class="product-description">
+              Salchicha americana X2, carne de hamburguesa picada, maíz, pico de
+              gallo, guacamole, nachos, jalapeños, queso fundido
+            </p>
+            <p class="product-price">$28.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="32000"
+            data-category="premium"
+          >
+            <div class="product-badge premium-badge">👑 PREMIUM</div>
+            <h3 class="product-name">Matolote 33CM XXL</h3>
+            <p class="product-description">
+              Salchicha americana X2, carne y pollo en cuadritos, queso,
+              tocineta X2, cebolla
+            </p>
+            <p class="product-price">$32.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: SALCHIPAPAS -->
+      <section id="salchipapas" class="menu-section" data-section="salchipapas">
+        <div class="section-header">
+          <img
+            src="images/icon-salchipapas.png"
+            alt="Salchipapas"
+            class="section-icon"
+          />
+          <div>
+            <h2 class="section-title">Salchipapas</h2>
+            <p class="section-subtitle">Con papas a la francesa</p>
+          </div>
+        </div>
+
+        <div class="products-grid">
+          <article
+            class="product-card"
+            data-price="16000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Chompiras</h3>
+            <p class="product-description">
+              2 salchichas zenú, queso fundido, queso costeño
+            </p>
+            <p class="product-price">$16.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="17000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Chaparrón</h3>
+            <p class="product-description">
+              Chorizo X2, queso fundido, queso costeño
+            </p>
+            <p class="product-price">$17.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="19000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Chompiras Especial</h3>
+            <p class="product-description">
+              2 salchichas zenú, pollo desmechado, queso costeño, queso fundido,
+              vegetales, papitas chips
+            </p>
+            <p class="product-price">$19.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Chaparrón Especial</h3>
+            <p class="product-description">
+              2 chorizos, pollo desmechado, papitas chips, vegetales, queso
+              costeño, queso fundido
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Chanfle</h3>
+            <p class="product-description">
+              Salchicha americana, chorizo, carne de hamburguesa picada, queso
+              fundido, tocineta picada, quesos
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Doña Nieves</h3>
+            <p class="product-description">
+              Chorizo, salchicha americana, pollo desmechado, quesos, maíz,
+              pepperoni, cebolla
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="38000"
+            data-category="premium"
+          >
+            <div class="product-badge premium-badge">👑 PREMIUM</div>
+            <h3 class="product-name">Botija</h3>
+            <p class="product-description">
+              Chorizo, pollo y carne desmechados, maíz, quesos, 2 salchichas
+              zenú, tocineta
+            </p>
+            <p class="product-price">$38.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: DELICIAS CHAVOS -->
+      <section
+        id="delicias-chavos"
+        class="menu-section"
+        data-section="delicias"
+      >
+        <div class="section-header">
+          <img src="images/icon-delicias.png" alt="Delicias" class="section-icon" />
+          <div>
+            <h2 class="section-title">Delicias Chavos</h2>
+            <p class="section-subtitle">Especialidades de la casa</p>
+          </div>
+        </div>
+
+        <div class="products-grid">
+          <article
+            class="product-card"
+            data-price="38000"
+            data-category="premium"
+          >
+            <h3 class="product-name">Papas Lucas</h3>
+            <p class="product-description">
+              Carne desmechada, maíz, maduritos, 2 chorizos, quesos, papa a la
+              francesa
+            </p>
+            <p class="product-price">$38.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Patacón Carne</h3>
+            <p class="product-description">
+              Carne desmechada, chorizo, maíz, vegetales, queso fundido, queso
+              costeño, papitas chips
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Patacón Ranchero</h3>
+            <p class="product-description">
+              Pollo desmechado, vegetales, tocineta, queso fundido, queso
+              costeño, salchicha, papitas chips, maíz
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <div class="product-badge picante">🌶️ PICANTE</div>
+            <h3 class="product-name">Mexicano</h3>
+            <p class="product-description">
+              Carne de hamburguesa picada, carne desmechada, maíz, queso
+              fundido, queso costeño, jalapeños, guacamole, vegetales, nachos
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="25000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Patacón Especial</h3>
+            <p class="product-description">
+              Carne y pollo en cuadritos, chorizo, pepperoni, queso fundido,
+              queso costeño, vegetales
+            </p>
+            <p class="product-price">$25.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="20000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Nachos para dos</h3>
+            <p class="product-description">
+              Nachos, carne desmechada, tocineta, chorizo premium, carne
+              artesanal, maíz, guacamole, vegetales, queso, papa a la francesa
+            </p>
+            <p class="product-price">$20.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: SÁNDWICH -->
+      <section id="sandwich" class="menu-section" data-section="sandwich">
+        <div class="section-header">
+          <img src="images/icon-sandwich.png" alt="Sándwich" class="section-icon" />
+          <div>
+            <h2 class="section-title">Sándwich</h2>
+            <p class="section-subtitle">Acompañados con papas a la francesa</p>
+          </div>
+        </div>
+
+        <div class="products-grid">
+          <article
+            class="product-card"
+            data-price="16000"
+            data-category="economico"
+          >
+            <h3 class="product-name">El Gorgojo</h3>
+            <p class="product-description">
+              Pollo desmechado, queso, pepperoni, vegetales
+            </p>
+            <p class="product-price">$16.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="17000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Carneseca</h3>
+            <p class="product-description">
+              Carne desmechada, chorizo, maíz, queso, vegetales
+            </p>
+            <p class="product-price">$17.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECCIÓN: DESGRANADOS -->
+      <section id="desgranados" class="menu-section" data-section="desgranados">
+        <div class="section-header">
+          <img
+            src="images/icon-desgranados.png"
+            alt="Desgranados"
+            class="section-icon"
+          />
+          <div>
+            <h2 class="section-title">Desgranados</h2>
+            <p class="section-subtitle">Con papa francesa</p>
+          </div>
+        </div>
+
+        <div class="products-grid">
+          <article
+            class="product-card"
+            data-price="18000"
+            data-category="economico"
+          >
+            <h3 class="product-name">Ranchero</h3>
+            <p class="product-description">
+              Pollo desmechado, queso fundido, queso costeño, maíz, tocineta,
+              salchicha zenú, papa francesa
+            </p>
+            <p class="product-price">$18.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="22000"
+            data-category="medio"
+          >
+            <h3 class="product-name">Mixto</h3>
+            <p class="product-description">
+              Pollo desmechado, queso fundido, queso costeño, maíz, tocineta,
+              carne en cuadritos, papa francesa
+            </p>
+            <p class="product-price">$22.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="23000"
+            data-category="medio"
+          >
+            <h3 class="product-name">De carne</h3>
+            <p class="product-description">
+              Carne desmechada, queso fundido, queso costeño, chorizo, maíz,
+              tocineta, papa francesa
+            </p>
+            <p class="product-price">$23.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+
+          <article
+            class="product-card"
+            data-price="37000"
+            data-category="premium"
+          >
+            <div class="product-badge recomendado">⭐ PARA COMPARTIR</div>
+            <h3 class="product-name">Especial Para 2</h3>
+            <p class="product-description">
+              Carne y pollo en cuadros, queso fundido, queso costeño, maíz,
+              tocineta, chorizo, papa francesa
+            </p>
+            <p class="product-price">$37.000</p>
+            <button class="btn-primary" onclick="abrirModal(this)">
+              Ver Detalles
+            </button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <!-- MODAL DE PRODUCTO -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="cerrarModal()">×</button>
+
+        <div class="modal-header">
+          <h2 id="modal-nombre" class="modal-title"></h2>
+          <p id="modal-precio" class="modal-price"></p>
+        </div>
+
+        <div class="modal-body">
+          <!-- FASE 1: CANTIDAD -->
+          <div id="fase-cantidad" class="fase-wizard">
+            <div class="wizard-intro">
+              <h3>¿Cuántos de este producto deseas?</h3>
+              <p>Luego podrás personalizar cada uno</p>
+            </div>
+            <div class="quantity-control-wizard">
+              <button
+                class="qty-btn-wizard"
+                onclick="cambiarCantidadWizard(-1)"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                id="wizard-cantidad"
+                value="1"
+                min="1"
+                max="10"
+                readonly
+              />
+              <button class="qty-btn-wizard" onclick="cambiarCantidadWizard(1)">
+                +
+              </button>
+            </div>
+            <div class="wizard-footer">
+              <button class="btn-secondary" onclick="cancelarWizard()">
+                Cancelar
+              </button>
+              <button class="btn-primary" onclick="irAFase2()">
+                Continuar →
+              </button>
+            </div>
+          </div>
+
+          <!-- FASE 2: PERSONALIZACIÓN -->
+          <div
+            id="fase-personalizacion"
+            class="fase-wizard"
+            style="display: none"
+          >
+            <div class="wizard-intro">
+              <h3>Personaliza cada producto</h3>
+              <p>Desmarca lo que NO quieres en cada uno</p>
+            </div>
+            <div id="productos-personalizar"></div>
+            <div class="wizard-footer">
+              <button class="btn-secondary" onclick="cancelarWizard()">
+                Cancelar
+              </button>
+              <button class="btn-primary" onclick="irAFase3()">
+                Continuar →
+              </button>
+            </div>
+          </div>
+
+          <!-- FASE 3: RESUMEN -->
+          <div id="fase-resumen" class="fase-wizard" style="display: none">
+            <div class="wizard-intro">
+              <h3>Revisa tu pedido</h3>
+              <p>Verifica que todo esté correcto</p>
+            </div>
+            <div id="resumen-final"></div>
+            <div class="wizard-footer">
+              <button class="btn-secondary" onclick="cancelarWizard()">
+                Cancelar
+              </button>
+              <button class="btn-outline-special" onclick="volverAFase2()">
+                ← Volver a editar
+              </button>
+              <button class="btn-primary" onclick="confirmarPedidoWizard()">
+                ✅ Agregar al Carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL DE EDICIÓN DE PRODUCTO -->
+    <div id="edit-modal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="cerrarEditModal()">×</button>
+
+        <div class="modal-header">
+          <h2 id="edit-modal-nombre" class="modal-title">Editar Producto</h2>
+          <p id="edit-modal-precio" class="modal-price"></p>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-section">
+            <h3>Descripción</h3>
+            <p id="edit-modal-descripcion" class="modal-text"></p>
+          </div>
+
+          <div class="modal-section">
+            <h3>Personaliza tu pedido</h3>
+            <div id="edit-modal-ingredientes" class="ingredientes-list"></div>
+          </div>
+
+          <div class="modal-section">
+            <h3>Cantidad</h3>
+            <div class="quantity-control">
+              <button class="qty-btn" onclick="cambiarEditCantidad(-1)">
+                -
+              </button>
+              <input
+                type="number"
+                id="edit-modal-cantidad"
+                value="1"
+                min="1"
+                max="10"
+                readonly
+              />
+              <button class="qty-btn" onclick="cambiarEditCantidad(1)">
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-section total-section">
+            <h3>Subtotal</h3>
+            <p id="edit-modal-subtotal" class="modal-subtotal">$0</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-primary" onclick="guardarEdicionProducto()">
+            💾 Guardar Cambios
+          </button>
+          <div class="modal-footer-secondary">
+            <button class="btn-cancel" onclick="cancelarEdicion()">
+              🗑️ Cancelar Cambios
+            </button>
+            <button class="btn-close" onclick="cerrarEditModal()">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARRITO LATERAL -->
+    <div id="carrito-sidebar" class="carrito-sidebar">
+      <div class="carrito-header">
+        <h2>🛒 Tu Pedido</h2>
+        <button class="carrito-close" onclick="toggleCarrito()">×</button>
+      </div>
+
+      <div id="carrito-items" class="carrito-items">
+        <div class="carrito-empty">
+          <p>Tu carrito está vacío</p>
+          <p class="carrito-empty-subtitle">Agrega productos para comenzar</p>
+        </div>
+      </div>
+
+      <div class="carrito-footer">
+        <div class="carrito-total">
+          <span>Total:</span>
+          <span id="carrito-total">$0</span>
+        </div>
+        <button class="btn-whatsapp" onclick="mostrarCardPedido()">
+          💬 Pedir por WhatsApp
+        </button>
+        <button class="btn-continue-shopping" onclick="seguirExplorando()">
+          🍔 Seguir Explorando
+        </button>
+        <button class="btn-clear-cart" onclick="vaciarCarrito()">
+          Vaciar Carrito
+        </button>
+      </div>
+    </div>
+
+    <!-- CARD DE PEDIDO -->
+    <div id="pedido-card" class="pedido-card">
+      <div class="pedido-card-content">
+        <div class="pedido-header">
+          <h3>📋 Finalizar Pedido</h3>
+          <button class="pedido-close" onclick="cerrarCardPedido()">×</button>
+        </div>
+
+        <div class="pedido-body">
+          <!-- TIPO DE PEDIDO -->
+          <div class="pedido-section">
+            <h4>🍽️ Tipo de Pedido</h4>
+            <div class="tipo-pedido-options">
+              <button class="tipo-option" data-tipo="recoger">
+                🏪 Para Recoger
+              </button>
+              <button class="tipo-option" data-tipo="domicilio">
+                🏠 Domicilio
+              </button>
+              <button class="tipo-option" data-tipo="local">
+                🍽️ Para Comer en el Lugar
+              </button>
+            </div>
+          </div>
+
+          <!-- NOMBRE DEL CLIENTE -->
+          <div class="pedido-section">
+            <h4>👤 Información del Cliente</h4>
+            <input
+              type="text"
+              id="cliente-nombre"
+              placeholder="Ingresa tu nombre completo"
+              class="pedido-input"
+            />
+          </div>
+
+          <!-- CAMPOS DOMICILIO (OCULTOS INICIALMENTE) -->
+          <div
+            id="campos-domicilio"
+            class="pedido-section campos-domicilio"
+            style="display: none"
+          >
+            <h4>📍 Información de Entrega</h4>
+            <input
+              type="text"
+              id="cliente-direccion"
+              placeholder="Dirección completa"
+              class="pedido-input"
+            />
+            <input
+              type="text"
+              id="cliente-barrio"
+              placeholder="Barrio o sector"
+              class="pedido-input"
+            />
+            <textarea
+              id="cliente-especificaciones"
+              placeholder="Especificaciones adicionales (opcional)"
+              class="pedido-textarea"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- MENSAJES DE VALIDACIÓN -->
+          <div
+            id="validacion-mensaje"
+            class="validacion-mensaje"
+            style="display: none"
+          ></div>
+
+          <!-- BOTÓN ENVIAR -->
+          <button class="btn-enviar-pedido" onclick="enviarPedidoWhatsApp()">
+            📱 Enviar Pedido por WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERLAY -->
+    <div
+      id="overlay"
+      class="overlay"
+      onclick="
+        cerrarModal();
+        toggleCarrito();
+        cerrarCardPedido();
+        cerrarEditModal();
+      "
+    ></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-content">
+        <h3>Chavos Burger</h3>
+        <p>se me chispoteó... pero de lo rica 😋</p>
+        <div class="footer-info">
+          <p>📞 WhatsApp: <a href="tel:+573183752974">318 375 2974</a></p>
+          <p>
+            🕐 Lun–Dom: 5:00 PM – 10:30 PM <br />
+            🚫 Martes cerrado
+          </p>
+        </div>
+        <p class="footer-copy">
+          &copy; 2025 Chavos Burger - Todos los derechos reservados
+        </p>
+        <p class="footer-dev">Desarrollado por <strong>Webloom</strong></p>
+      </div>
+    </footer>
+
+    <!-- BOTÓN FLOTANTE DE NAVEGACIÓN -->
+    <button
+      id="floating-nav-btn"
+      class="floating-nav-btn"
+      onclick="toggleFloatingMenu()"
+    >
+      <span class="nav-icon">☰</span>
+      <span class="nav-text">Menú</span>
+    </button>
+
+    <!-- MENÚ FLOTANTE -->
+    <div id="floating-menu" class="floating-menu">
+      <div class="floating-menu-header">
+        <span>Ir a sección</span>
+        <button class="floating-menu-close" onclick="toggleFloatingMenu()">
+          ×
+        </button>
+      </div>
+      <nav class="floating-menu-nav">
+        <a href="#burgers" onclick="toggleFloatingMenu()">🍔 Burgers</a>
+        <a href="#perros" onclick="toggleFloatingMenu()">🌭 Perros</a>
+        <a href="#salchipapas" onclick="toggleFloatingMenu()">🍟 Salchipapas</a>
+        <a href="#delicias-chavos" onclick="toggleFloatingMenu()"
+          >✨ Delicias Chavos</a
+        >
+        <a href="#sandwich" onclick="toggleFloatingMenu()">🥪 Sándwich</a>
+        <a href="#desgranados" onclick="toggleFloatingMenu()">🌽 Desgranados</a>
+      </nav>
+    </div>
+
+    <!-- OVERLAY para el menú flotante -->
+    <div
+      id="floating-overlay"
+      class="floating-overlay"
+      onclick="toggleFloatingMenu()"
+    ></div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
