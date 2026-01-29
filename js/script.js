@@ -1548,7 +1548,7 @@ function enviarPedidoWhatsApp() {
   };
   mensaje += `💳 *Método de pago:* ${metodoPagoTexto[metodoPagoSeleccionado]}\n\n`;
 
-  mensaje += `¿Podrían confirmarme por favor si hay disponibilidad?\n¡Muchas gracias!\n\n`;
+  mensaje += `¡Muchas gracias!\n\n`;
 
   // Aviso automático
   mensaje += `ℹ️ Aviso automático de Chavos Burger:\nSi su pedido no es confirmado en un lapso de 10 minutos, intente más tarde debido a la alta demanda de pedidos.`;
