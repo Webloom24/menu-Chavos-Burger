@@ -25,47 +25,691 @@ document.addEventListener("DOMContentLoaded", function () {
   cargarCarritoDesdeLocalStorage();
   animarElementos();
 });
+// === BUSCADOR MEJORADO ===
+let searchTimeout = null;
+let searchHistory = JSON.parse(localStorage.getItem('chavos-search-history') || '[]');
+
 function inicializarBuscador() {
   const buscador = document.getElementById("buscador");
   const resultadoTexto = document.getElementById("resultado-busqueda");
+  const searchClear = document.getElementById("search-clear");
+  const searchLoader = document.getElementById("search-loader");
+  const searchSuggestions = document.getElementById("search-suggestions");
+  const searchHistoryEl = document.getElementById("search-history");
 
-  buscador.addEventListener("input", function () {
-    const textoBusqueda = this.value.toLowerCase().trim();
-    const productos = document.querySelectorAll(".product-card");
-    let productosEncontrados = 0;
-
-    productos.forEach(function (producto) {
-      const nombre = producto
-        .querySelector(".product-name")
-        .textContent.toLowerCase();
-      const descripcion = producto
-        .querySelector(".product-description")
-        .textContent.toLowerCase();
-
-      if (
-        nombre.includes(textoBusqueda) ||
-        descripcion.includes(textoBusqueda)
-      ) {
-        producto.style.display = "block";
-        producto.style.animation = "fadeInScale 0.3s ease-out";
-        productosEncontrados++;
-      } else {
-        producto.style.display = "none";
-      }
-    });
-
-    // Mostrar resultado
-    if (textoBusqueda === "") {
-      resultadoTexto.textContent = "";
-    } else if (productosEncontrados === 0) {
-      resultadoTexto.textContent =
-        "😕 No se encontraron productos con ese nombre";
-      resultadoTexto.style.color = "#C23D1F";
-    } else {
-      resultadoTexto.textContent = `✅ ${productosEncontrados} producto(s) encontrado(s)`;
-      resultadoTexto.style.color = "#25D366";
+  // Mostrar historial al enfocar el buscador vacío
+  buscador.addEventListener("focus", function () {
+    if (this.value.trim() === "" && searchHistory.length > 0) {
+      mostrarHistorial();
     }
   });
+
+  // Ocultar historial/sugerencias al perder foco
+  buscador.addEventListener("blur", function () {
+    setTimeout(() => {
+      searchSuggestions.classList.remove("visible");
+      searchHistoryEl.classList.remove("visible");
+    }, 200);
+  });
+
+  // Búsqueda con debounce
+  buscador.addEventListener("input", function () {
+    const textoBusqueda = this.value.trim();
+
+    // Mostrar/ocultar botón limpiar
+    if (textoBusqueda.length > 0) {
+      searchClear.classList.add("visible");
+    } else {
+      searchClear.classList.remove("visible");
+    }
+
+    // Ocultar historial
+    searchHistoryEl.classList.remove("visible");
+
+    // Limpiar timeout anterior
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    if (textoBusqueda === "") {
+      searchLoader.classList.remove("visible");
+      searchSuggestions.classList.remove("visible");
+      resetearBusqueda();
+      return;
+    }
+
+    // Mostrar loader
+    searchLoader.classList.add("visible");
+
+    // Debounce de 300ms
+    searchTimeout = setTimeout(() => {
+      ejecutarBusqueda(textoBusqueda);
+      searchLoader.classList.remove("visible");
+    }, 300);
+  });
+
+  // Botón limpiar
+  searchClear.addEventListener("click", function () {
+    buscador.value = "";
+    searchClear.classList.remove("visible");
+    searchSuggestions.classList.remove("visible");
+    resetearBusqueda();
+    buscador.focus();
+  });
+
+  // Enter para guardar en historial
+  buscador.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && this.value.trim() !== "") {
+      guardarEnHistorial(this.value.trim());
+      searchSuggestions.classList.remove("visible");
+    }
+  });
+}
+
+// Mapeo de categorías con aliases para búsqueda
+const categoriasMap = {
+  'burgers': {
+    id: 'burgers',
+    nombre: 'Burgers',
+    icono: '🍔',
+    aliases: ['burger', 'burgers', 'hamburguesa', 'hamburguesas', 'hamburgesa', 'hamburgesas']
+  },
+  'perros': {
+    id: 'perros',
+    nombre: 'Perros',
+    icono: '🌭',
+    aliases: ['perro', 'perros', 'hotdog', 'hot dog', 'perro caliente', 'perros calientes']
+  },
+  'salchipapas': {
+    id: 'salchipapas',
+    nombre: 'Salchipapas',
+    icono: '🍟',
+    aliases: ['salchipapa', 'salchipapas', 'salchi']
+  },
+  'delicias': {
+    id: 'delicias',
+    nombre: 'Delicias Chavos',
+    icono: '✨',
+    aliases: ['delicia', 'delicias', 'delicias chavos']
+  },
+  'sandwich': {
+    id: 'sandwich',
+    nombre: 'Sándwich',
+    icono: '🥪',
+    aliases: ['sandwich', 'sandwiches', 'sándwich', 'sánduche', 'sanduche']
+  },
+  'desgranados': {
+    id: 'desgranados',
+    nombre: 'Desgranados',
+    icono: '🌽',
+    aliases: ['desgranado', 'desgranados']
+  }
+};
+
+// Detectar precio de forma permisiva
+function detectarPrecio(texto) {
+  const textoLimpio = texto.trim().toLowerCase();
+
+  // Patrones de precio que aceptamos
+  // $20.000, $20000, 20.000, 20000, 20mil, 20 mil, veinte mil, etc.
+
+  // Si contiene letras que no sean "mil" o "k", probablemente no es precio
+  if (/[a-z]/i.test(textoLimpio.replace(/mil|k/gi, ''))) {
+    return { esPrecio: false, valor: 0 };
+  }
+
+  // Detectar formatos numéricos: $20.000, 20.000, $20000, 20000
+  const matchNumerico = textoLimpio.match(/^\$?\s*([\d.,\s]+)\s*(mil|k)?$/i);
+  if (matchNumerico) {
+    let numero = matchNumerico[1].replace(/[.,\s]/g, '');
+    let valor = parseInt(numero);
+
+    if (isNaN(valor)) return { esPrecio: false, valor: 0 };
+
+    // Si tiene "mil" o "k", multiplicar por 1000
+    if (matchNumerico[2]) {
+      valor *= 1000;
+    }
+    // Si el número es muy pequeño (< 100), asumir que son miles
+    else if (valor > 0 && valor < 100) {
+      valor *= 1000;
+    }
+
+    // Validar que sea un precio razonable (entre 1000 y 100000)
+    if (valor >= 1000 && valor <= 100000) {
+      return { esPrecio: true, valor: valor };
+    }
+  }
+
+  return { esPrecio: false, valor: 0 };
+}
+
+function detectarCategoria(texto) {
+  const textoLower = texto.toLowerCase().trim();
+
+  // Solo detectar categoría si el texto coincide exactamente o casi exactamente con un alias
+  // No detectar si hay palabras adicionales que podrían ser nombres de productos
+  for (const [key, cat] of Object.entries(categoriasMap)) {
+    for (const alias of cat.aliases) {
+      // Coincidencia exacta
+      if (textoLower === alias) {
+        return cat;
+      }
+    }
+  }
+  return null;
+}
+
+function obtenerSugerenciasCategorias(texto) {
+  const textoLower = texto.toLowerCase().trim();
+  const sugerencias = [];
+
+  if (textoLower.length < 2) return sugerencias;
+
+  // Solo sugerir categorías si el texto es una sola palabra o coincide con el inicio de un alias
+  // Evitar sugerir categorías cuando hay múltiples palabras (probablemente es un nombre de producto)
+  const palabras = textoLower.split(/\s+/);
+  if (palabras.length > 1) return sugerencias;
+
+  for (const [key, cat] of Object.entries(categoriasMap)) {
+    for (const alias of cat.aliases) {
+      if (alias.startsWith(textoLower) || cat.nombre.toLowerCase().startsWith(textoLower)) {
+        if (!sugerencias.find(s => s.id === cat.id)) {
+          sugerencias.push(cat);
+        }
+        break;
+      }
+    }
+  }
+  return sugerencias;
+}
+
+function ejecutarBusqueda(textoBusqueda) {
+  const productos = document.querySelectorAll(".product-card");
+  const secciones = document.querySelectorAll(".menu-section");
+  const resultadoTexto = document.getElementById("resultado-busqueda");
+  const searchSuggestions = document.getElementById("search-suggestions");
+
+  const textoLower = textoBusqueda.toLowerCase();
+  let productosEncontrados = 0;
+  let sugerencias = [];
+
+  // Detectar si es búsqueda por precio (más permisivo)
+  const resultadoPrecio = detectarPrecio(textoBusqueda);
+  const esBusquedaPrecio = resultadoPrecio.esPrecio;
+  let precioObjetivo = resultadoPrecio.valor;
+
+  // Detectar si es búsqueda por categoría
+  const categoriaDetectada = detectarCategoria(textoBusqueda);
+  const esBusquedaCategoria = categoriaDetectada !== null;
+
+  productos.forEach(function (producto) {
+    const nombre = producto.querySelector(".product-name").textContent;
+    const nombreLower = nombre.toLowerCase();
+    const descripcion = producto.querySelector(".product-description").textContent;
+    const descripcionLower = descripcion.toLowerCase();
+    const precioTexto = producto.querySelector(".product-price").textContent;
+    const precio = parseInt(precioTexto.replace(/\D/g, ""));
+    const seccion = producto.closest(".menu-section");
+    const categoria = seccion ? seccion.getAttribute("data-section") : "";
+
+    let coincide = false;
+
+    if (esBusquedaCategoria) {
+      // Búsqueda por categoría
+      coincide = categoria === categoriaDetectada.id;
+    } else if (esBusquedaPrecio) {
+      // Búsqueda por precio con rango adaptativo
+      // ±3000 para precios bajos, ±5000 para precios altos
+      const rango = precioObjetivo <= 20000 ? 3000 : 5000;
+      coincide = Math.abs(precio - precioObjetivo) <= rango;
+    } else {
+      // Búsqueda normal + fuzzy
+      coincide = nombreLower.includes(textoLower) ||
+                 descripcionLower.includes(textoLower) ||
+                 fuzzyMatch(textoLower, nombreLower) ||
+                 fuzzyMatch(textoLower, descripcionLower);
+    }
+
+    if (coincide) {
+      producto.style.display = "block";
+      producto.style.animation = "fadeInScale 0.3s ease-out";
+      productosEncontrados++;
+
+      // Resaltar texto encontrado (no en búsqueda por categoría)
+      resaltarTexto(producto, textoBusqueda, esBusquedaPrecio || esBusquedaCategoria);
+
+      // Agregar a sugerencias de productos (máximo 5)
+      if (sugerencias.length < 5 && !esBusquedaCategoria) {
+        sugerencias.push({
+          tipo: 'producto',
+          nombre: nombre,
+          precio: precioTexto,
+          categoria: categoria,
+          elemento: producto
+        });
+      }
+    } else {
+      producto.style.display = "none";
+      quitarResaltado(producto);
+    }
+  });
+
+  // Ocultar secciones vacías
+  secciones.forEach(function (seccion) {
+    const productosVisibles = seccion.querySelectorAll(".product-card[style*='display: block']").length;
+    const productosNoOcultos = Array.from(seccion.querySelectorAll(".product-card")).filter(p => p.style.display !== "none").length;
+
+    if (productosVisibles === 0 && productosNoOcultos === 0) {
+      seccion.classList.add("hidden-section");
+    } else {
+      seccion.classList.remove("hidden-section");
+    }
+  });
+
+  // Agregar sugerencias de categorías al inicio
+  const sugerenciasCategorias = obtenerSugerenciasCategorias(textoBusqueda);
+
+  // Mostrar sugerencias combinadas (categorías + productos)
+  if ((sugerencias.length > 0 || sugerenciasCategorias.length > 0) && textoBusqueda.length >= 2 && !esBusquedaCategoria) {
+    mostrarSugerenciasCombinadas(sugerenciasCategorias, sugerencias, textoBusqueda);
+  } else {
+    searchSuggestions.classList.remove("visible");
+  }
+
+  // Mostrar resultado
+  if (textoBusqueda === "") {
+    resultadoTexto.textContent = "";
+  } else if (esBusquedaCategoria) {
+    resultadoTexto.innerHTML = `${categoriaDetectada.icono} <strong>${categoriaDetectada.nombre}</strong> - ${productosEncontrados} producto(s)`;
+    resultadoTexto.style.color = "#25D366";
+  } else if (esBusquedaPrecio) {
+    const precioFormateado = precioObjetivo.toLocaleString('es-CO');
+    const rango = precioObjetivo <= 20000 ? 3000 : 5000;
+    const rangoFormateado = rango.toLocaleString('es-CO');
+    if (productosEncontrados === 0) {
+      resultadoTexto.innerHTML = `💰 No hay productos cerca de <strong>$${precioFormateado}</strong>`;
+      resultadoTexto.style.color = "#C23D1F";
+    } else {
+      resultadoTexto.innerHTML = `💰 ${productosEncontrados} producto(s) cerca de <strong>$${precioFormateado}</strong> <span style="color: #666; font-size: 12px;">(±$${rangoFormateado})</span>`;
+      resultadoTexto.style.color = "#25D366";
+    }
+  } else if (productosEncontrados === 0) {
+    resultadoTexto.innerHTML = '😕 No se encontraron productos. <span style="color: #666; font-size: 13px;">Prueba con otro término</span>';
+    resultadoTexto.style.color = "#C23D1F";
+  } else {
+    resultadoTexto.textContent = `✅ ${productosEncontrados} producto(s) encontrado(s)`;
+    resultadoTexto.style.color = "#25D366";
+  }
+}
+
+// Fuzzy match - búsqueda tolerante a errores
+function fuzzyMatch(busqueda, texto) {
+  if (busqueda.length < 3) return false;
+
+  // Distancia de Levenshtein simplificada
+  const palabrasBusqueda = busqueda.split(/\s+/);
+  const palabrasTexto = texto.split(/\s+/);
+
+  for (const palabraBusqueda of palabrasBusqueda) {
+    if (palabraBusqueda.length < 3) continue;
+
+    for (const palabraTexto of palabrasTexto) {
+      if (palabraTexto.length < 3) continue;
+
+      // Verificar si son similares (tolerancia de 1-2 caracteres)
+      if (calcularSimilitud(palabraBusqueda, palabraTexto) >= 0.7) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function calcularSimilitud(str1, str2) {
+  const longer = str1.length > str2.length ? str1 : str2;
+  const shorter = str1.length > str2.length ? str2 : str1;
+
+  if (longer.length === 0) return 1.0;
+
+  const costs = [];
+  for (let i = 0; i <= longer.length; i++) {
+    let lastValue = i;
+    for (let j = 0; j <= shorter.length; j++) {
+      if (i === 0) {
+        costs[j] = j;
+      } else if (j > 0) {
+        let newValue = costs[j - 1];
+        if (longer.charAt(i - 1) !== shorter.charAt(j - 1)) {
+          newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+        }
+        costs[j - 1] = lastValue;
+        lastValue = newValue;
+      }
+    }
+    if (i > 0) costs[shorter.length] = lastValue;
+  }
+
+  return (longer.length - costs[shorter.length]) / longer.length;
+}
+
+// Resaltar texto encontrado
+function resaltarTexto(producto, busqueda, esPrecio) {
+  const nombreEl = producto.querySelector(".product-name");
+  const descripcionEl = producto.querySelector(".product-description");
+
+  // Guardar texto original
+  if (!nombreEl.dataset.original) {
+    nombreEl.dataset.original = nombreEl.textContent;
+  }
+  if (!descripcionEl.dataset.original) {
+    descripcionEl.dataset.original = descripcionEl.textContent;
+  }
+
+  if (esPrecio) {
+    // No resaltar en búsqueda por precio
+    nombreEl.innerHTML = nombreEl.dataset.original;
+    descripcionEl.innerHTML = descripcionEl.dataset.original;
+    return;
+  }
+
+  const regex = new RegExp(`(${escapeRegex(busqueda)})`, 'gi');
+  nombreEl.innerHTML = nombreEl.dataset.original.replace(regex, '<mark>$1</mark>');
+  descripcionEl.innerHTML = descripcionEl.dataset.original.replace(regex, '<mark>$1</mark>');
+}
+
+function quitarResaltado(producto) {
+  const nombreEl = producto.querySelector(".product-name");
+  const descripcionEl = producto.querySelector(".product-description");
+
+  if (nombreEl.dataset.original) {
+    nombreEl.innerHTML = nombreEl.dataset.original;
+  }
+  if (descripcionEl.dataset.original) {
+    descripcionEl.innerHTML = descripcionEl.dataset.original;
+  }
+}
+
+function escapeRegex(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Mostrar sugerencias combinadas (categorías + productos)
+function mostrarSugerenciasCombinadas(categorias, productos, busqueda) {
+  const container = document.getElementById("search-suggestions");
+  let html = '';
+
+  // Primero mostrar categorías coincidentes
+  if (categorias.length > 0) {
+    html += '<div class="suggestions-section-header">📂 Categorías</div>';
+    categorias.forEach(cat => {
+      html += `
+        <div class="suggestion-item suggestion-category-item" onclick="seleccionarCategoria('${cat.aliases[0]}')">
+          <span class="suggestion-icon">${cat.icono}</span>
+          <div class="suggestion-info">
+            <div class="suggestion-name">${cat.nombre}</div>
+            <div class="suggestion-category">Ver todos los productos</div>
+          </div>
+          <span class="suggestion-arrow">→</span>
+        </div>
+      `;
+    });
+  }
+
+  // Luego mostrar productos
+  if (productos.length > 0) {
+    if (categorias.length > 0) {
+      html += '<div class="suggestions-section-header">🍽️ Productos</div>';
+    }
+    productos.forEach(sug => {
+      const cat = categoriasMap[sug.categoria];
+      const icono = cat ? cat.icono : '🍽️';
+      const nombreCat = cat ? cat.nombre : sug.categoria;
+      const nombreResaltado = sug.nombre.replace(
+        new RegExp(`(${escapeRegex(busqueda)})`, 'gi'),
+        '<mark>$1</mark>'
+      );
+
+      html += `
+        <div class="suggestion-item" onclick="seleccionarSugerencia('${sug.nombre.replace(/'/g, "\\'")}')">
+          <span class="suggestion-icon">${icono}</span>
+          <div class="suggestion-info">
+            <div class="suggestion-name">${nombreResaltado}</div>
+            <div class="suggestion-category">${nombreCat}</div>
+          </div>
+          <span class="suggestion-price">${sug.precio}</span>
+        </div>
+      `;
+    });
+  }
+
+  if (html === '') {
+    container.classList.remove("visible");
+    return;
+  }
+
+  container.innerHTML = html;
+  container.classList.add("visible");
+}
+
+function seleccionarCategoria(categoria) {
+  const buscador = document.getElementById("buscador");
+  buscador.value = categoria;
+  guardarEnHistorial(categoria);
+  ejecutarBusqueda(categoria);
+  document.getElementById("search-suggestions").classList.remove("visible");
+}
+
+function seleccionarSugerencia(nombre) {
+  const buscador = document.getElementById("buscador");
+  buscador.value = nombre;
+  guardarEnHistorial(nombre);
+  ejecutarBusqueda(nombre);
+  document.getElementById("search-suggestions").classList.remove("visible");
+
+  // Buscar el producto y hacer scroll
+  setTimeout(() => {
+    const productos = document.querySelectorAll(".product-card");
+    for (const producto of productos) {
+      const nombreProducto = producto.querySelector(".product-name").textContent;
+      if (nombreProducto.toLowerCase() === nombre.toLowerCase()) {
+        scrollToProducto(producto);
+        // Mostrar botón para volver
+        mostrarBotonVolverInicio();
+        break;
+      }
+    }
+  }, 100);
+}
+
+// Función para hacer scroll al producto de forma óptima
+function scrollToProducto(producto) {
+  // Obtener dimensiones
+  const rect = producto.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 60;
+  const searchSectionHeight = document.querySelector('.search-filter-section')?.offsetHeight || 150;
+  const offsetTop = navbarHeight + 20; // Espacio desde arriba
+
+  // Calcular la posición ideal para que el producto quede centrado verticalmente
+  // pero sin quedar oculto por el navbar o la sección de búsqueda
+  const productoHeight = rect.height;
+  const espacioDisponible = viewportHeight - offsetTop - 20; // 20px de margen inferior
+
+  let scrollPosition;
+
+  if (productoHeight <= espacioDisponible) {
+    // Si el producto cabe en el espacio disponible, centrarlo
+    const centroViewport = (espacioDisponible - productoHeight) / 2;
+    scrollPosition = window.scrollY + rect.top - offsetTop - centroViewport;
+  } else {
+    // Si el producto es más alto que el espacio, alinearlo arriba
+    scrollPosition = window.scrollY + rect.top - offsetTop;
+  }
+
+  // Asegurar que no sea negativo
+  scrollPosition = Math.max(0, scrollPosition);
+
+  // Hacer scroll suave
+  window.scrollTo({
+    top: scrollPosition,
+    behavior: 'smooth'
+  });
+
+  // Agregar efecto visual al producto
+  producto.style.transition = 'box-shadow 0.3s ease, transform 0.3s ease';
+  producto.style.boxShadow = '0 0 0 3px var(--color-primary), 0 8px 24px rgba(217, 78, 40, 0.3)';
+  producto.style.transform = 'scale(1.02)';
+
+  // Quitar efecto después de 2 segundos
+  setTimeout(() => {
+    producto.style.boxShadow = '';
+    producto.style.transform = '';
+  }, 2000);
+}
+
+// Historial de búsquedas
+function mostrarHistorial() {
+  const container = document.getElementById("search-history");
+
+  if (searchHistory.length === 0) {
+    container.classList.remove("visible");
+    return;
+  }
+
+  let html = `
+    <div class="history-header">
+      <span>🕐 Búsquedas recientes</span>
+      <button class="history-clear" onclick="limpiarHistorial()">Limpiar</button>
+    </div>
+  `;
+
+  searchHistory.slice(0, 5).forEach(item => {
+    html += `<div class="history-item" onclick="usarHistorial('${item}')">${item}</div>`;
+  });
+
+  container.innerHTML = html;
+  container.classList.add("visible");
+}
+
+function guardarEnHistorial(termino) {
+  // Evitar duplicados
+  searchHistory = searchHistory.filter(item => item.toLowerCase() !== termino.toLowerCase());
+  searchHistory.unshift(termino);
+  // Máximo 10 items
+  searchHistory = searchHistory.slice(0, 10);
+  localStorage.setItem('chavos-search-history', JSON.stringify(searchHistory));
+}
+
+function usarHistorial(termino) {
+  const buscador = document.getElementById("buscador");
+  buscador.value = termino;
+  document.getElementById("search-history").classList.remove("visible");
+  document.getElementById("search-clear").classList.add("visible");
+  ejecutarBusqueda(termino);
+
+  // Buscar el primer producto visible y hacer scroll
+  setTimeout(() => {
+    const productos = document.querySelectorAll(".product-card");
+    for (const producto of productos) {
+      if (producto.style.display !== "none") {
+        const nombreProducto = producto.querySelector(".product-name").textContent;
+        // Si el término coincide exactamente con el nombre, ir a ese producto
+        if (nombreProducto.toLowerCase() === termino.toLowerCase()) {
+          scrollToProducto(producto);
+          mostrarBotonVolverInicio();
+          return;
+        }
+      }
+    }
+    // Si no hay coincidencia exacta, ir al primer producto visible
+    for (const producto of productos) {
+      if (producto.style.display !== "none") {
+        scrollToProducto(producto);
+        mostrarBotonVolverInicio();
+        break;
+      }
+    }
+  }, 150);
+}
+
+function limpiarHistorial() {
+  searchHistory = [];
+  localStorage.removeItem('chavos-search-history');
+  document.getElementById("search-history").classList.remove("visible");
+}
+
+function resetearBusqueda() {
+  const productos = document.querySelectorAll(".product-card");
+  const secciones = document.querySelectorAll(".menu-section");
+  const resultadoTexto = document.getElementById("resultado-busqueda");
+
+  productos.forEach(function (producto) {
+    producto.style.display = "block";
+    quitarResaltado(producto);
+  });
+
+  secciones.forEach(function (seccion) {
+    seccion.classList.remove("hidden-section");
+  });
+
+  resultadoTexto.textContent = "";
+
+  // Ocultar botón de volver
+  ocultarBotonVolverInicio();
+}
+
+// === BOTÓN FLOTANTE PARA VOLVER AL INICIO ===
+function mostrarBotonVolverInicio() {
+  let boton = document.getElementById("btn-volver-inicio");
+
+  if (!boton) {
+    // Crear el botón si no existe
+    boton = document.createElement("button");
+    boton.id = "btn-volver-inicio";
+    boton.className = "btn-volver-inicio";
+    boton.innerHTML = `
+      <span class="btn-volver-icon">↑</span>
+      <span class="btn-volver-text">Ver todo el menú</span>
+    `;
+    boton.onclick = volverAlInicio;
+    document.body.appendChild(boton);
+  }
+
+  // Mostrar con animación
+  setTimeout(() => {
+    boton.classList.add("visible");
+  }, 500);
+}
+
+function ocultarBotonVolverInicio() {
+  const boton = document.getElementById("btn-volver-inicio");
+  if (boton) {
+    boton.classList.remove("visible");
+  }
+}
+
+function volverAlInicio() {
+  // Limpiar búsqueda
+  const buscador = document.getElementById("buscador");
+  const searchClear = document.getElementById("search-clear");
+
+  buscador.value = "";
+  searchClear.classList.remove("visible");
+  resetearBusqueda();
+
+  // Scroll suave al inicio de las secciones de productos
+  const mainContent = document.querySelector(".main-content");
+  if (mainContent) {
+    const offsetTop = document.querySelector('.navbar')?.offsetHeight || 60;
+    window.scrollTo({
+      top: mainContent.offsetTop - offsetTop - 10,
+      behavior: 'smooth'
+    });
+  }
+
+  // Mostrar notificación sutil
+  mostrarNotificacion("✅ Mostrando todos los productos", "success");
 }
 
 // === FILTROS POR PRECIO ===

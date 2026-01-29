@@ -59,23 +59,32 @@
     <section class="search-filter-section">
       <div class="container">
         <div class="search-box">
-          <input
-            type="text"
-            id="buscador"
-            placeholder="🔍 Busca tu producto favorito..."
-          />
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              id="buscador"
+              placeholder="🔍 Buscar producto, categoría o precio (ej: 20mil)"
+              autocomplete="off"
+            />
+            <span class="search-loader" id="search-loader"></span>
+            <button class="search-clear" id="search-clear" type="button">
+              ×
+            </button>
+          </div>
+          <div class="search-suggestions" id="search-suggestions"></div>
+          <div class="search-history" id="search-history"></div>
         </div>
 
         <div class="filters">
-          <button class="filter-btn active" data-filter="todos">Todos</button>
+          <button class="filter-btn active" data-filter="todos">TODOS</button>
           <button class="filter-btn" data-filter="economico">
-            💰 Hasta $20.000
+            💰 HASTA $20.000
           </button>
           <button class="filter-btn" data-filter="medio">
             💵 $20.000 - $30.000
           </button>
           <button class="filter-btn" data-filter="premium">
-            💎 Más de $30.000
+            💎 MÁS DE $30.000
           </button>
         </div>
 
@@ -88,7 +97,11 @@
       <!-- SECCIÓN: BURGERS -->
       <section id="burgers" class="menu-section" data-section="burgers">
         <div class="section-header">
-          <img src="images/icon-burgers.png" alt="Burgers" class="section-icon" />
+          <img
+            src="images/icon-burgers.png"
+            alt="Burgers"
+            class="section-icon"
+          />
           <div>
             <h2 class="section-title">Burgers</h2>
             <p class="section-subtitle">Acompañadas con papas a la francesa</p>
@@ -102,14 +115,13 @@
             data-price="18000"
             data-category="economico"
           >
-            <div class="product-badge nuevo">NUEVO</div>
             <h3 class="product-name">Vecindad</h3>
             <p class="product-description">
               Carne 150gr, lechuga, tomate, cebolla, queso
             </p>
             <p class="product-price">$18.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -126,7 +138,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -142,7 +154,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -158,7 +170,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -175,7 +187,7 @@
             </p>
             <p class="product-price">$23.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -192,7 +204,7 @@
             </p>
             <p class="product-price">$23.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -209,7 +221,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -225,7 +237,7 @@
             </p>
             <p class="product-price">$26.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -242,7 +254,7 @@
             </p>
             <p class="product-price">$29.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -260,7 +272,7 @@
             </p>
             <p class="product-price">$29.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -279,7 +291,7 @@
             </p>
             <p class="product-price">$33.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
         </div>
@@ -307,7 +319,7 @@
             </p>
             <p class="product-price">$16.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -322,7 +334,7 @@
             </p>
             <p class="product-price">$18.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -338,7 +350,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -354,7 +366,7 @@
             </p>
             <p class="product-price">$22.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -370,7 +382,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -386,7 +398,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -403,7 +415,7 @@
             </p>
             <p class="product-price">$28.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -420,7 +432,7 @@
             </p>
             <p class="product-price">$32.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
         </div>
@@ -452,7 +464,7 @@
             </p>
             <p class="product-price">$16.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -467,7 +479,7 @@
             </p>
             <p class="product-price">$17.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -483,7 +495,7 @@
             </p>
             <p class="product-price">$19.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -499,7 +511,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -515,7 +527,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -524,6 +536,7 @@
             data-price="25000"
             data-category="medio"
           >
+            <div class="product-badge nuevo">NUEVO</div>
             <h3 class="product-name">Doña Nieves</h3>
             <p class="product-description">
               Chorizo, salchicha americana, pollo desmechado, quesos, maíz,
@@ -531,7 +544,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -548,7 +561,7 @@
             </p>
             <p class="product-price">$38.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
         </div>
@@ -561,7 +574,11 @@
         data-section="delicias"
       >
         <div class="section-header">
-          <img src="images/icon-delicias.png" alt="Delicias" class="section-icon" />
+          <img
+            src="images/icon-delicias.png"
+            alt="Delicias"
+            class="section-icon"
+          />
           <div>
             <h2 class="section-title">Delicias Chavos</h2>
             <p class="section-subtitle">Especialidades de la casa</p>
@@ -581,7 +598,7 @@
             </p>
             <p class="product-price">$38.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -597,7 +614,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -613,7 +630,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -630,7 +647,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -646,7 +663,7 @@
             </p>
             <p class="product-price">$25.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -662,7 +679,7 @@
             </p>
             <p class="product-price">$20.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
         </div>
@@ -671,7 +688,11 @@
       <!-- SECCIÓN: SÁNDWICH -->
       <section id="sandwich" class="menu-section" data-section="sandwich">
         <div class="section-header">
-          <img src="images/icon-sandwich.png" alt="Sándwich" class="section-icon" />
+          <img
+            src="images/icon-sandwich.png"
+            alt="Sándwich"
+            class="section-icon"
+          />
           <div>
             <h2 class="section-title">Sándwich</h2>
             <p class="section-subtitle">Acompañados con papas a la francesa</p>
@@ -690,7 +711,7 @@
             </p>
             <p class="product-price">$16.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -705,7 +726,7 @@
             </p>
             <p class="product-price">$17.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
         </div>
@@ -738,7 +759,7 @@
             </p>
             <p class="product-price">$18.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -754,7 +775,7 @@
             </p>
             <p class="product-price">$22.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -770,7 +791,7 @@
             </p>
             <p class="product-price">$23.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
 
@@ -787,7 +808,7 @@
             </p>
             <p class="product-price">$37.000</p>
             <button class="btn-primary" onclick="abrirModal(this)">
-              Ver Detalles
+              Pedir ahora
             </button>
           </article>
         </div>
