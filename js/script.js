@@ -772,9 +772,16 @@ function inicializarNavegacion() {
 // === CARD DE PEDIDO ===
 function inicializarCardPedido() {
   // Event listeners para botones de tipo de pedido
-  document.querySelectorAll(".tipo-option").forEach((btn) => {
+  document.querySelectorAll(".tipo-option:not(.metodo-pago-option)").forEach((btn) => {
     btn.addEventListener("click", function () {
       seleccionarTipoPedido(this.getAttribute("data-tipo"));
+    });
+  });
+
+  // Event listeners para botones de método de pago
+  document.querySelectorAll(".metodo-pago-option").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      seleccionarMetodoPago(this.getAttribute("data-metodo"));
     });
   });
 
@@ -1265,6 +1272,7 @@ function seguirExplorando() {
 
 // Variables globales para el pedido
 let tipoPedidoSeleccionado = null;
+let metodoPagoSeleccionado = null;
 
 // Mostrar card de pedido
 function mostrarCardPedido() {
@@ -1275,6 +1283,7 @@ function mostrarCardPedido() {
 
   // Resetear formulario
   tipoPedidoSeleccionado = null;
+  metodoPagoSeleccionado = null;
   document.getElementById("cliente-nombre").value = "";
   document.getElementById("cliente-direccion").value = "";
   document.getElementById("cliente-barrio").value = "";
@@ -1283,7 +1292,7 @@ function mostrarCardPedido() {
   // Ocultar campos de domicilio inicialmente
   document.getElementById("campos-domicilio").style.display = "none";
 
-  // Remover clases activas de opciones
+  // Remover clases activas de opciones de tipo de pedido y método de pago
   document.querySelectorAll(".tipo-option").forEach((btn) => {
     btn.classList.remove("active");
   });
@@ -1304,8 +1313,8 @@ function cerrarCardPedido() {
 function seleccionarTipoPedido(tipo) {
   tipoPedidoSeleccionado = tipo;
 
-  // Remover clase active de todas las opciones
-  document.querySelectorAll(".tipo-option").forEach((btn) => {
+  // Remover clase active de todas las opciones de tipo de pedido (no de método de pago)
+  document.querySelectorAll(".tipo-option:not(.metodo-pago-option)").forEach((btn) => {
     btn.classList.remove("active");
   });
 
@@ -1324,6 +1333,22 @@ function seleccionarTipoPedido(tipo) {
   document.getElementById("validacion-mensaje").style.display = "none";
 }
 
+// Seleccionar método de pago
+function seleccionarMetodoPago(metodo) {
+  metodoPagoSeleccionado = metodo;
+
+  // Remover clase active de todas las opciones de método de pago
+  document.querySelectorAll(".metodo-pago-option").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+
+  // Agregar clase active al botón seleccionado
+  event.target.classList.add("active");
+
+  // Ocultar mensaje de validación
+  document.getElementById("validacion-mensaje").style.display = "none";
+}
+
 // Validar formulario
 function validarFormulario() {
   const nombre = document.getElementById("cliente-nombre").value.trim();
@@ -1337,6 +1362,15 @@ function validarFormulario() {
   if (!tipoPedidoSeleccionado) {
     mostrarMensajeValidacion(
       "Por favor selecciona un tipo de pedido.",
+      "error",
+    );
+    return false;
+  }
+
+  // Validar método de pago
+  if (!metodoPagoSeleccionado) {
+    mostrarMensajeValidacion(
+      "Por favor selecciona un método de pago.",
       "error",
     );
     return false;
@@ -1506,7 +1540,18 @@ function enviarPedidoWhatsApp() {
       break;
   }
 
-  mensaje += `¿Podrían confirmarme por favor si hay disponibilidad?\n¡Muchas gracias!`;
+  // Método de pago
+  const metodoPagoTexto = {
+    nequi: "Nequi",
+    llave: "Llave",
+    efectivo: "Efectivo"
+  };
+  mensaje += `💳 *Método de pago:* ${metodoPagoTexto[metodoPagoSeleccionado]}\n\n`;
+
+  mensaje += `¿Podrían confirmarme por favor si hay disponibilidad?\n¡Muchas gracias!\n\n`;
+
+  // Aviso automático
+  mensaje += `ℹ️ Aviso automático de Chavos Burger:\nSi su pedido no es confirmado en un lapso de 10 minutos, intente más tarde debido a la alta demanda de pedidos.`;
 
   // Codificar y abrir WhatsApp
   const mensajeCodificado = encodeURIComponent(mensaje);
