@@ -3758,3 +3758,164 @@ body {
     font-size: 12px;
   }
 }
+
+/* ============================================
+   OPTIMIZACIONES DE RENDIMIENTO MÓVIL
+   Agregadas para mejorar fluidez en dispositivos
+   de gama media/baja sin alterar el diseño
+   ============================================ */
+
+/* === PAUSAR ANIMACIONES INFINITAS CUANDO REDUCE MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  .product-badge,
+  .cart-count,
+  .cart-badge,
+  .section-icon,
+  .scroll-arrow,
+  .hero-scroll-indicator,
+  .btn-primary::before {
+    animation: none !important;
+  }
+
+  /* Transiciones más rápidas */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* === OPTIMIZACIÓN PARA TABLETS GAMA BAJA (768-1024px) === */
+@media (min-width: 769px) and (max-width: 1024px) {
+  /* Reducir blur en tablets también */
+  .navbar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--color-secondary);
+  }
+
+  .overlay {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .floating-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* Sombras más ligeras */
+  .product-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .product-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+}
+
+/* === OPTIMIZACIÓN DE ANIMACIONES INFINITAS EN MÓVIL === */
+@media (max-width: 768px) {
+  /* Reducir duración de animaciones infinitas */
+  .section-icon {
+    animation-duration: 3s;
+  }
+
+  .cart-count,
+  .cart-badge {
+    animation-duration: 3s;
+  }
+
+  .product-badge {
+    animation-duration: 4s;
+  }
+
+  /* Desactivar shimmer en botones en móvil (consume GPU) */
+  .btn-primary::before {
+    animation: none;
+  }
+
+  /* Simplificar hero scroll indicator */
+  .hero-scroll-indicator {
+    animation-duration: 4s;
+  }
+
+  .scroll-arrow {
+    animation-duration: 3s;
+  }
+}
+
+/* === MÓVILES MUY PEQUEÑOS O GAMA BAJA === */
+@media (max-width: 480px) {
+  /* Desactivar animaciones decorativas en móviles pequeños */
+  .section-icon {
+    animation: none;
+  }
+
+  .hero-scroll-indicator,
+  .scroll-arrow {
+    animation: none;
+  }
+
+  /* Reducir complejidad de gradientes */
+  .btn-hero::before {
+    display: none;
+  }
+}
+
+/* === AHORRO DE BATERÍA (cuando está en modo bajo consumo) === */
+@media (prefers-reduced-motion: no-preference) {
+  /* Pausar animaciones fuera del viewport usando content-visibility */
+  .product-badge {
+    content-visibility: auto;
+  }
+}
+
+/* === MEJORA DE SCROLL EN CONTENEDORES === */
+.carrito-items,
+.modal-body,
+.pedido-body,
+.search-suggestions,
+.search-history {
+  overscroll-behavior: contain;
+  scroll-behavior: auto; /* Evitar scroll suave en contenedores (causa lag) */
+}
+
+/* === OPTIMIZACIÓN DE WILL-CHANGE === */
+/* Solo aplicar will-change durante interacciones activas */
+.product-card:active,
+.btn-primary:active,
+.tipo-option:active {
+  will-change: transform;
+}
+
+/* Limpiar will-change después de animaciones */
+.modal-content,
+.carrito-sidebar,
+.pedido-card-content,
+.floating-menu {
+  will-change: auto;
+}
+
+.modal.active .modal-content,
+.carrito-sidebar.active,
+.pedido-card.active .pedido-card-content,
+.floating-menu.active {
+  will-change: transform, opacity;
+}
+
+/* === ELIMINAR REPAINTS INNECESARIOS === */
+@media (max-width: 768px) {
+  /* Forzar GPU layer solo en elementos que se animan */
+  .modal-content,
+  .carrito-sidebar,
+  .floating-menu {
+    transform: translateZ(0);
+  }
+
+  /* Evitar repaint en scroll */
+  .navbar {
+    transform: translateZ(0);
+  }
+}

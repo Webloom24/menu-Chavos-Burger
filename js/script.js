@@ -34,6 +34,26 @@ function rafThrottle(func) {
 // Detectar si es móvil para optimizaciones específicas
 const esMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
+// === CACHÉ DE ELEMENTOS DOM PARA MEJOR RENDIMIENTO ===
+let productosCache = null;
+let seccionesCache = null;
+
+// Función para obtener productos cacheados
+function getProductosCache() {
+  if (!productosCache) {
+    productosCache = Array.from(document.querySelectorAll(".product-card"));
+  }
+  return productosCache;
+}
+
+// Función para obtener secciones cacheadas
+function getSeccionesCache() {
+  if (!seccionesCache) {
+    seccionesCache = Array.from(document.querySelectorAll(".menu-section"));
+  }
+  return seccionesCache;
+}
+
 // === ESTADO GLOBAL ===
 let carrito = [];
 let productoActual = null;
@@ -112,11 +132,12 @@ function inicializarBuscador() {
     // Mostrar loader
     searchLoader.classList.add("visible");
 
-    // Debounce de 300ms
+    // Debounce adaptativo: 400ms en móvil, 250ms en desktop
+    const debounceTime = esMobile ? 400 : 250;
     searchTimeout = setTimeout(() => {
       ejecutarBusqueda(textoBusqueda);
       searchLoader.classList.remove("visible");
-    }, 300);
+    }, debounceTime);
   });
 
   // Botón limpiar
@@ -256,8 +277,9 @@ function obtenerSugerenciasCategorias(texto) {
 }
 
 function ejecutarBusqueda(textoBusqueda) {
-  const productos = document.querySelectorAll(".product-card");
-  const secciones = document.querySelectorAll(".menu-section");
+  // Usar caché de productos para mejor rendimiento
+  const productos = getProductosCache();
+  const secciones = getSeccionesCache();
   const resultadoTexto = document.getElementById("resultado-busqueda");
   const searchSuggestions = document.getElementById("search-suggestions");
 
@@ -374,18 +396,24 @@ function ejecutarBusqueda(textoBusqueda) {
   }
 }
 
-// Fuzzy match - búsqueda tolerante a errores
+// Fuzzy match - búsqueda tolerante a errores (optimizado para móvil)
 function fuzzyMatch(busqueda, texto) {
-  if (busqueda.length < 3) return false;
+  // En móvil, solo usar fuzzy match para búsquedas de 4+ caracteres
+  const minLength = esMobile ? 4 : 3;
+  if (busqueda.length < minLength) return false;
 
   // Distancia de Levenshtein simplificada
   const palabrasBusqueda = busqueda.split(/\s+/);
   const palabrasTexto = texto.split(/\s+/);
 
-  for (const palabraBusqueda of palabrasBusqueda) {
-    if (palabraBusqueda.length < 3) continue;
+  // Limitar iteraciones en móvil para mejor rendimiento
+  const maxPalabras = esMobile ? 3 : palabrasTexto.length;
 
-    for (const palabraTexto of palabrasTexto) {
+  for (const palabraBusqueda of palabrasBusqueda) {
+    if (palabraBusqueda.length < minLength) continue;
+
+    for (let i = 0; i < Math.min(maxPalabras, palabrasTexto.length); i++) {
+      const palabraTexto = palabrasTexto[i];
       if (palabraTexto.length < 3) continue;
 
       // Verificar si son similares (tolerancia de 1-2 caracteres)
@@ -668,8 +696,9 @@ function limpiarHistorial() {
 }
 
 function resetearBusqueda() {
-  const productos = document.querySelectorAll(".product-card");
-  const secciones = document.querySelectorAll(".menu-section");
+  // Usar caché para mejor rendimiento
+  const productos = getProductosCache();
+  const secciones = getSeccionesCache();
   const resultadoTexto = document.getElementById("resultado-busqueda");
 
   productos.forEach(function (producto) {
@@ -1978,9 +2007,7 @@ window.addEventListener("load", function () {
   actualizarCarritoUI();
 });
 
-console.log("🍔 Chavos Burger - Sistema cargado correctamente");
-console.log(
-  "📱 Para cambiar el número de WhatsApp, modifica la variable WHATSAPP_NUMBER en script.js",
-);
-console.log("🎯 Botón flotante de navegación cargado correctamente");
-console.log("🛒 Botón de carrito fijo superior cargado correctamente");
+// Logs desactivados en producción para mejor rendimiento
+// Para debug, descomentar las siguientes líneas:
+// console.log("🍔 Chavos Burger - Sistema cargado correctamente");
+// console.log("📱 WhatsApp: modifica WHATSAPP_NUMBER en script.js");
