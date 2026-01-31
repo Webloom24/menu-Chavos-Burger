@@ -5,15 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chavos Burger - Menú Digital Premium</title>
 
-    <!-- Google Fonts - Tipografía distintiva -->
+    <!-- Preconnect para recursos externos -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://wa.me" />
+
+    <!-- Google Fonts con display=swap para carga no bloqueante -->
     <link
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Righteous&family=Inter:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
 
+    <!-- CSS crítico precargado -->
+    <link rel="preload" href="css/styles.css" as="style" />
     <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- JavaScript precargado (defer) -->
+    <link rel="preload" href="js/script.js" as="script" />
   </head>
   <body>
     <!-- HERO BANNER -->
@@ -100,7 +108,7 @@
           <img
             src="images/icon-burgers.png"
             alt="Burgers"
-            class="section-icon"
+            class="section-icon" loading="lazy"
           />
           <div>
             <h2 class="section-title">Burgers</h2>
@@ -300,7 +308,7 @@
       <!-- SECCIÓN: PERROS -->
       <section id="perros" class="menu-section" data-section="perros">
         <div class="section-header">
-          <img src="images/icon-perros.png" alt="Perros" class="section-icon" />
+          <img src="images/icon-perros.png" alt="Perros" class="section-icon" loading="lazy" />
           <div>
             <h2 class="section-title">Perros</h2>
             <p class="section-subtitle">Acompañados con papas a la francesa</p>
@@ -444,7 +452,7 @@
           <img
             src="images/icon-salchipapas.png"
             alt="Salchipapas"
-            class="section-icon"
+            class="section-icon" loading="lazy"
           />
           <div>
             <h2 class="section-title">Salchipapas</h2>
@@ -577,7 +585,7 @@
           <img
             src="images/icon-delicias.png"
             alt="Delicias"
-            class="section-icon"
+            class="section-icon" loading="lazy"
           />
           <div>
             <h2 class="section-title">Delicias Chavos</h2>
@@ -691,7 +699,7 @@
           <img
             src="images/icon-sandwich.png"
             alt="Sándwich"
-            class="section-icon"
+            class="section-icon" loading="lazy"
           />
           <div>
             <h2 class="section-title">Sándwich</h2>
@@ -738,7 +746,7 @@
           <img
             src="images/icon-desgranados.png"
             alt="Desgranados"
-            class="section-icon"
+            class="section-icon" loading="lazy"
           />
           <div>
             <h2 class="section-title">Desgranados</h2>
@@ -1161,6 +1169,6 @@
       onclick="toggleFloatingMenu()"
     ></div>
 
-    <script src="js/script.js"></script>
+    <script src="js/script.js" defer></script>
   </body>
 </html>

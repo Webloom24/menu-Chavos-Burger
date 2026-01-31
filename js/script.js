@@ -3,6 +3,34 @@
    Funcionalidades avanzadas con UX intuitiva
    ============================================ */
 
+// === UTILIDADES DE RENDIMIENTO ===
+
+// Throttle: limita la frecuencia de ejecución de una función
+function throttle(func, limit) {
+  let inThrottle;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
+// RequestAnimationFrame para animaciones suaves
+function rafThrottle(func) {
+  let ticking = false;
+  return function(...args) {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        func.apply(this, args);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+}
+
 // === ESTADO GLOBAL ===
 let carrito = [];
 let productoActual = null;
@@ -749,13 +777,14 @@ function inicializarNavegacion() {
   const navLinks = document.querySelectorAll(".nav-link");
   const sections = document.querySelectorAll(".menu-section");
 
-  window.addEventListener("scroll", function () {
+  // Función optimizada con throttle para mejor rendimiento
+  const actualizarNavActiva = throttle(function () {
     let current = "";
+    const scrollPos = window.scrollY;
 
     sections.forEach((section) => {
       const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (scrollY >= sectionTop - 200) {
+      if (scrollPos >= sectionTop - 200) {
         current = section.getAttribute("id");
       }
     });
@@ -766,7 +795,10 @@ function inicializarNavegacion() {
         link.classList.add("active");
       }
     });
-  });
+  }, 100);
+
+  // Usar passive: true para mejor rendimiento de scroll
+  window.addEventListener("scroll", actualizarNavActiva, { passive: true });
 }
 
 // === CARD DE PEDIDO ===
@@ -1814,20 +1846,27 @@ function mostrarNotificacion(mensaje, tipo = "success") {
 
 // === ANIMACIONES SCROLL ===
 function animarElementos() {
+  // Verificar soporte de IntersectionObserver
+  if (!('IntersectionObserver' in window)) return;
+
   const observerOptions = {
     threshold: 0.1,
-    rootMargin: "0px 0px -100px 0px",
+    rootMargin: "0px 0px -50px 0px",
   };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.style.animation = "fadeInUp 0.6s ease-out";
+        // Usar requestAnimationFrame para animación suave
+        requestAnimationFrame(() => {
+          entry.target.style.animation = "fadeInUp 0.5s ease-out";
+        });
         observer.unobserve(entry.target);
       }
     });
   }, observerOptions);
 
+  // Usar fragment para mejor rendimiento
   document.querySelectorAll(".menu-section").forEach((section) => {
     observer.observe(section);
   });
@@ -1889,12 +1928,12 @@ document.head.appendChild(style);
    BOTÓN FLOTANTE DE NAVEGACIÓN
    ============================================ */
 
-// Mostrar/ocultar botón flotante al hacer scroll
-window.addEventListener("scroll", function () {
+// Mostrar/ocultar botón flotante al hacer scroll (optimizado con throttle)
+const manejarScrollFloatingBtn = throttle(function () {
   const floatingBtn = document.getElementById("floating-nav-btn");
   const navbar = document.querySelector(".navbar");
 
-  if (!floatingBtn) return;
+  if (!floatingBtn || !navbar) return;
 
   // Obtener la posición del navbar
   const navbarBottom = navbar.offsetTop + navbar.offsetHeight;
@@ -1905,7 +1944,9 @@ window.addEventListener("scroll", function () {
   } else {
     floatingBtn.classList.remove("visible");
   }
-});
+}, 100);
+
+window.addEventListener("scroll", manejarScrollFloatingBtn, { passive: true });
 
 // Toggle del menú flotante
 function toggleFloatingMenu() {

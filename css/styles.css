@@ -41,6 +41,37 @@
   --transition-slow: 0.5s ease;
 }
 
+/* === OPTIMIZACIONES DE RENDIMIENTO === */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* GPU acceleration para elementos animados */
+.product-card,
+.modal-content,
+.carrito-sidebar,
+.pedido-card-content,
+.floating-menu,
+.btn-hero,
+.tipo-option,
+.nav-link {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Contención para mejor rendimiento de layout */
+.menu-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+.product-card {
+  contain: layout style paint;
+}
+
 /* === RESET Y BASE === */
 * {
   margin: 0;
@@ -49,7 +80,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   overflow-x: hidden;
 }
 
