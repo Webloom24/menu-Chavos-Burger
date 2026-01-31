@@ -72,6 +72,90 @@
   contain: layout style paint;
 }
 
+/* === OPTIMIZACIONES MÓVIL === */
+@media (max-width: 768px) {
+  /* Scroll nativo optimizado para móvil */
+  html, body {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Reducir complejidad de sombras en móvil */
+  .product-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .product-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Desactivar hover en móvil (solo active) */
+  .product-card:hover {
+    transform: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Touch feedback rápido */
+  .btn-primary,
+  .btn-hero,
+  .tipo-option,
+  .nav-link,
+  .filter-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn-primary:active,
+  .tipo-option:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  /* Animaciones más rápidas en móvil */
+  .modal-content,
+  .carrito-sidebar,
+  .pedido-card-content {
+    transition-duration: 0.2s !important;
+  }
+
+  /* Reducir blur en móvil (consume mucha GPU) */
+  .navbar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--color-secondary);
+  }
+
+  /* Scroll más fluido en contenedores */
+  .carrito-items,
+  .modal-body,
+  .pedido-body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Evitar zoom en inputs en iOS */
+  input, textarea, select, button {
+    font-size: 16px !important;
+  }
+}
+
+/* Optimizaciones extra para móviles pequeños */
+@media (max-width: 480px) {
+  /* Animaciones mínimas */
+  .hero-content,
+  .hero-title,
+  .hero-subtitle,
+  .hero-buttons {
+    animation-duration: 0.4s !important;
+  }
+
+  /* Sombras más ligeras */
+  .modal-content,
+  .pedido-card-content {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
 /* === RESET Y BASE === */
 * {
   margin: 0;
@@ -949,17 +1033,18 @@ body {
 /* === BADGES === */
 .product-badge {
   position: absolute;
-  top: -12px;
-  right: 20px;
+  top: 12px;
+  right: 12px;
   padding: 6px 16px;
   font-size: 12px;
   font-weight: bold;
   border-radius: 20px;
   color: var(--text-light);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
   animation: wiggle 2s ease-in-out infinite;
+  z-index: 5;
 }
 
 .product-badge.nuevo {
@@ -2642,8 +2727,8 @@ body {
   .product-badge {
     font-size: 10px;
     padding: 4px 12px;
-    top: -10px;
-    right: 16px;
+    top: 10px;
+    right: 10px;
   }
 
   /* Modal - SIMPLE */

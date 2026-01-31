@@ -31,6 +31,9 @@ function rafThrottle(func) {
   };
 }
 
+// Detectar si es móvil para optimizaciones específicas
+const esMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
 // === ESTADO GLOBAL ===
 let carrito = [];
 let productoActual = null;
@@ -556,44 +559,41 @@ function scrollToProducto(producto) {
   const rect = producto.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
   const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 60;
-  const searchSectionHeight = document.querySelector('.search-filter-section')?.offsetHeight || 150;
-  const offsetTop = navbarHeight + 20; // Espacio desde arriba
+  const offsetTop = navbarHeight + 20;
 
-  // Calcular la posición ideal para que el producto quede centrado verticalmente
-  // pero sin quedar oculto por el navbar o la sección de búsqueda
   const productoHeight = rect.height;
-  const espacioDisponible = viewportHeight - offsetTop - 20; // 20px de margen inferior
+  const espacioDisponible = viewportHeight - offsetTop - 20;
 
   let scrollPosition;
 
   if (productoHeight <= espacioDisponible) {
-    // Si el producto cabe en el espacio disponible, centrarlo
     const centroViewport = (espacioDisponible - productoHeight) / 2;
     scrollPosition = window.scrollY + rect.top - offsetTop - centroViewport;
   } else {
-    // Si el producto es más alto que el espacio, alinearlo arriba
     scrollPosition = window.scrollY + rect.top - offsetTop;
   }
 
-  // Asegurar que no sea negativo
   scrollPosition = Math.max(0, scrollPosition);
 
-  // Hacer scroll suave
-  window.scrollTo({
-    top: scrollPosition,
-    behavior: 'smooth'
+  // En móvil usar scroll nativo (más fluido), en desktop smooth
+  if (esMobile) {
+    window.scrollTo(0, scrollPosition);
+  } else {
+    window.scrollTo({
+      top: scrollPosition,
+      behavior: 'smooth'
+    });
+  }
+
+  // Efecto visual más ligero en móvil
+  requestAnimationFrame(() => {
+    producto.style.transition = 'box-shadow 0.2s ease';
+    producto.style.boxShadow = '0 0 0 3px var(--color-primary)';
+
+    setTimeout(() => {
+      producto.style.boxShadow = '';
+    }, 1500);
   });
-
-  // Agregar efecto visual al producto
-  producto.style.transition = 'box-shadow 0.3s ease, transform 0.3s ease';
-  producto.style.boxShadow = '0 0 0 3px var(--color-primary), 0 8px 24px rgba(217, 78, 40, 0.3)';
-  producto.style.transform = 'scale(1.02)';
-
-  // Quitar efecto después de 2 segundos
-  setTimeout(() => {
-    producto.style.boxShadow = '';
-    producto.style.transform = '';
-  }, 2000);
 }
 
 // Historial de búsquedas
@@ -907,23 +907,14 @@ function mostrarFase(numeroFase) {
 
   wizardFaseActual = numeroFase;
 
-  // Hacer scroll al inicio del modal - múltiples métodos para asegurar compatibilidad
-  setTimeout(() => {
-    // Método 1: scroll en modal-content
+  // Scroll al inicio del modal (optimizado para móvil)
+  requestAnimationFrame(() => {
     const modalContent = document.querySelector("#modal .modal-content");
-    if (modalContent) {
-      modalContent.scrollTop = 0;
-    }
-
-    // Método 2: scroll en modal-body
     const modalBody = document.querySelector("#modal .modal-body");
-    if (modalBody) {
-      modalBody.scrollTop = 0;
-    }
 
-    // Método 3: scroll en window si es móvil
-    window.scrollTo(0, 0);
-  }, 50);
+    if (modalContent) modalContent.scrollTop = 0;
+    if (modalBody) modalBody.scrollTop = 0;
+  });
 }
 
 function cambiarCantidadWizard(cambio) {
@@ -1794,7 +1785,6 @@ function cargarCarritoDesdeLocalStorage() {
 
 // === NOTIFICACIONES MEJORADAS ===
 function mostrarNotificacion(mensaje, tipo = "success") {
-  // Definir estilos según el tipo
   const estilos = {
     success: {
       background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
@@ -1811,37 +1801,40 @@ function mostrarNotificacion(mensaje, tipo = "success") {
   };
 
   const estilo = estilos[tipo] || estilos.success;
+  const duracionAnim = esMobile ? "0.2s" : "0.4s";
+  const tiempoVisible = esMobile ? 2500 : 3500;
 
-  // Crear elemento de notificación
   const notif = document.createElement("div");
   notif.innerHTML = `<span style="margin-right: 8px;">${estilo.icon}</span>${mensaje}`;
   notif.style.cssText = `
     position: fixed;
-    top: 100px;
-    right: 20px;
+    top: ${esMobile ? '80px' : '100px'};
+    right: ${esMobile ? '10px' : '20px'};
+    left: ${esMobile ? '10px' : 'auto'};
     background: ${estilo.background};
     color: white;
-    padding: 16px 24px;
+    padding: ${esMobile ? '12px 16px' : '16px 24px'};
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     z-index: 10000;
     font-weight: 600;
-    animation: slideInRight 0.4s ease-out;
-    max-width: 350px;
+    font-size: ${esMobile ? '14px' : '16px'};
+    animation: slideInRight ${duracionAnim} ease-out;
+    max-width: ${esMobile ? 'none' : '350px'};
     line-height: 1.4;
+    transform: translateZ(0);
   `;
 
   document.body.appendChild(notif);
 
-  // Eliminar después de 3.5 segundos
   setTimeout(() => {
-    notif.style.animation = "slideOutRight 0.4s ease-out";
+    notif.style.animation = `slideOutRight ${duracionAnim} ease-out`;
     setTimeout(() => {
       if (notif.parentNode) {
         document.body.removeChild(notif);
       }
-    }, 400);
-  }, 3500);
+    }, esMobile ? 200 : 400);
+  }, tiempoVisible);
 }
 
 // === ANIMACIONES SCROLL ===
@@ -1849,24 +1842,26 @@ function animarElementos() {
   // Verificar soporte de IntersectionObserver
   if (!('IntersectionObserver' in window)) return;
 
+  // En móvil, reducir animaciones para mejor rendimiento
   const observerOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px",
+    threshold: esMobile ? 0.05 : 0.1,
+    rootMargin: esMobile ? "0px" : "0px 0px -50px 0px",
   };
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        // Usar requestAnimationFrame para animación suave
         requestAnimationFrame(() => {
-          entry.target.style.animation = "fadeInUp 0.5s ease-out";
+          // Animación más rápida en móvil
+          entry.target.style.animation = esMobile
+            ? "fadeInUp 0.3s ease-out"
+            : "fadeInUp 0.5s ease-out";
         });
         observer.unobserve(entry.target);
       }
     });
   }, observerOptions);
 
-  // Usar fragment para mejor rendimiento
   document.querySelectorAll(".menu-section").forEach((section) => {
     observer.observe(section);
   });
