@@ -1995,6 +1995,45 @@ function toggleFloatingMenu() {
   }
 }
 
+// Navegar a sección y cerrar menú (soluciona problema de primer clic)
+function navegarASeccion(seccionId, event) {
+  // Prevenir comportamiento por defecto del enlace
+  if (event) {
+    event.preventDefault();
+  }
+
+  // Cerrar el menú primero
+  const menu = document.getElementById("floating-menu");
+  const overlay = document.getElementById("floating-overlay");
+  const btn = document.getElementById("floating-nav-btn");
+
+  if (menu) menu.classList.remove("active");
+  if (overlay) overlay.classList.remove("active");
+  if (btn) btn.style.transform = "scale(1)";
+
+  // Navegar a la sección después de un pequeño delay para asegurar que el menú se cerró
+  requestAnimationFrame(() => {
+    const seccion = document.getElementById(seccionId);
+    if (seccion) {
+      const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 60;
+      const offsetTop = seccion.offsetTop - navbarHeight - 10;
+
+      // Usar scroll nativo en móvil para mejor rendimiento
+      if (esMobile) {
+        window.scrollTo(0, offsetTop);
+      } else {
+        window.scrollTo({
+          top: offsetTop,
+          behavior: 'smooth'
+        });
+      }
+
+      // Actualizar el hash en la URL sin causar scroll adicional
+      history.pushState(null, null, '#' + seccionId);
+    }
+  });
+}
+
 // Vaciar carrito al recargar o cerrar la página
 window.addEventListener("beforeunload", function () {
   localStorage.removeItem("chavos-burger-carrito");
