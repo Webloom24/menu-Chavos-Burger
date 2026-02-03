@@ -146,9 +146,30 @@ async function cargarDatos() {
   if (!modoOffline && typeof SupabaseDB !== 'undefined') {
     try {
       menuData = await SupabaseDB.cargarMenuCompleto(false); // false = incluir no visibles
+
+      // Si Supabase devuelve datos vacíos, usar datos de fallback y sincronizar
+      if (!menuData.categorias || menuData.categorias.length === 0) {
+        console.log('Base de datos vacía, cargando datos iniciales...');
+        const datosIniciales = obtenerDatosCompletos();
+        menuData = datosIniciales;
+
+        // Ofrecer sincronizar los datos iniciales a la nube
+        mostrarToast('Base de datos vacía. Cargando datos iniciales...', 'info');
+
+        // Sincronizar automáticamente a Supabase
+        try {
+          await SupabaseDB.guardarMenuCompleto(menuData);
+          mostrarToast('Datos iniciales sincronizados a la nube', 'success');
+        } catch (syncError) {
+          console.error('Error sincronizando datos iniciales:', syncError);
+          mostrarToast('Datos cargados localmente. Guarda cambios para sincronizar.', 'warning');
+        }
+      } else {
+        mostrarToast('Datos cargados desde la nube', 'success');
+      }
+
       guardarEnLocalStorage(); // Cache local
       finalizarCarga();
-      mostrarToast('Datos cargados desde la nube', 'success');
       return;
     } catch (e) {
       console.error('Error cargando desde Supabase:', e);
