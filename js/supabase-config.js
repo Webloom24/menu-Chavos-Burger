@@ -12,12 +12,16 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 let supabase = null;
 
 function initSupabase() {
-  if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('Supabase inicializado correctamente');
+  // Supabase JS v2 CDN expone el objeto como 'supabase' global
+  const supabaseLib = window.supabase;
+
+  if (supabaseLib && typeof supabaseLib.createClient === 'function') {
+    supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase inicializado correctamente');
     return true;
   }
-  console.error('SDK de Supabase no encontrado');
+
+  console.error('❌ SDK de Supabase no encontrado. Verifica que el script del CDN se haya cargado.');
   return false;
 }
 

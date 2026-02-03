@@ -20,7 +20,15 @@ let modoOffline = false;
 document.addEventListener('DOMContentLoaded', async function() {
   // Inicializar Supabase
   if (typeof SupabaseDB !== 'undefined') {
-    SupabaseDB.init();
+    const inicializado = SupabaseDB.init();
+
+    if (!inicializado) {
+      console.error('No se pudo inicializar Supabase');
+      modoOffline = true;
+      // Aún así mostrar login para intentar más tarde
+      mostrarModalLogin();
+      return;
+    }
 
     // Verificar si hay sesión activa
     const autenticado = await verificarAutenticacion();
@@ -30,8 +38,11 @@ document.addEventListener('DOMContentLoaded', async function() {
       return;
     }
   } else {
-    console.warn('Supabase no disponible, modo offline activado');
+    console.warn('SupabaseDB no disponible, modo offline activado');
     modoOffline = true;
+    // Sin Supabase, mostrar login de todas formas (no funcionará pero informa al usuario)
+    mostrarModalLogin();
+    return;
   }
 
   await cargarDatos();
