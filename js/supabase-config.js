@@ -9,14 +9,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 // === CLIENTE DE SUPABASE ===
 // Se inicializa cuando se carga el SDK de Supabase
-let supabase = null;
+let supabaseClient = null;
 
 function initSupabase() {
   // Supabase JS v2 CDN expone el objeto como 'supabase' global
   const supabaseLib = window.supabase;
 
   if (supabaseLib && typeof supabaseLib.createClient === 'function') {
-    supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     console.log('✅ Supabase inicializado correctamente');
     return true;
   }
@@ -29,11 +29,11 @@ function initSupabase() {
 
 // Iniciar sesión con email y password
 async function loginWithEmail(email, password) {
-  if (!supabase) {
+  if (!supabaseClient) {
     throw new Error('Supabase no inicializado');
   }
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email,
     password
   });
@@ -44,17 +44,17 @@ async function loginWithEmail(email, password) {
 
 // Cerrar sesión
 async function logout() {
-  if (!supabase) return;
+  if (!supabaseClient) return;
 
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabaseClient.auth.signOut();
   if (error) throw error;
 }
 
 // Obtener usuario actual
 async function getCurrentUser() {
-  if (!supabase) return null;
+  if (!supabaseClient) return null;
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabaseClient.auth.getUser();
   return user;
 }
 
@@ -66,9 +66,9 @@ async function isAuthenticated() {
 
 // Escuchar cambios de autenticación
 function onAuthStateChange(callback) {
-  if (!supabase) return;
+  if (!supabaseClient) return;
 
-  supabase.auth.onAuthStateChange((event, session) => {
+  supabaseClient.auth.onAuthStateChange((event, session) => {
     callback(event, session);
   });
 }
@@ -77,7 +77,7 @@ function onAuthStateChange(callback) {
 
 // --- CONFIGURACIÓN ---
 async function getConfiguracion() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('configuracion')
     .select('*')
     .single();
@@ -91,7 +91,7 @@ async function updateConfiguracion(config) {
   const existing = await getConfiguracion();
 
   if (existing) {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('configuracion')
       .update(config)
       .eq('id', existing.id)
@@ -101,7 +101,7 @@ async function updateConfiguracion(config) {
     if (error) throw error;
     return data;
   } else {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('configuracion')
       .insert(config)
       .select()
@@ -114,7 +114,7 @@ async function updateConfiguracion(config) {
 
 // --- CATEGORÍAS ---
 async function getCategorias(soloVisibles = false) {
-  let query = supabase
+  let query = supabaseClient
     .from('categorias')
     .select('*')
     .order('orden', { ascending: true });
@@ -129,7 +129,7 @@ async function getCategorias(soloVisibles = false) {
 }
 
 async function getCategoria(id) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('categorias')
     .select('*')
     .eq('id', id)
@@ -140,7 +140,7 @@ async function getCategoria(id) {
 }
 
 async function createCategoria(categoria) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('categorias')
     .insert(categoria)
     .select()
@@ -151,7 +151,7 @@ async function createCategoria(categoria) {
 }
 
 async function updateCategoria(id, categoria) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('categorias')
     .update(categoria)
     .eq('id', id)
@@ -163,7 +163,7 @@ async function updateCategoria(id, categoria) {
 }
 
 async function deleteCategoria(id) {
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('categorias')
     .delete()
     .eq('id', id);
@@ -174,7 +174,7 @@ async function deleteCategoria(id) {
 
 // --- PRODUCTOS ---
 async function getProductos(soloVisibles = false) {
-  let query = supabase
+  let query = supabaseClient
     .from('productos')
     .select('*')
     .order('orden', { ascending: true });
@@ -189,7 +189,7 @@ async function getProductos(soloVisibles = false) {
 }
 
 async function getProductosPorCategoria(categoriaId, soloVisibles = false) {
-  let query = supabase
+  let query = supabaseClient
     .from('productos')
     .select('*')
     .eq('categoria', categoriaId)
@@ -205,7 +205,7 @@ async function getProductosPorCategoria(categoriaId, soloVisibles = false) {
 }
 
 async function getProducto(id) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('productos')
     .select('*')
     .eq('id', id)
@@ -216,7 +216,7 @@ async function getProducto(id) {
 }
 
 async function createProducto(producto) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('productos')
     .insert(producto)
     .select()
@@ -227,7 +227,7 @@ async function createProducto(producto) {
 }
 
 async function updateProducto(id, producto) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('productos')
     .update(producto)
     .eq('id', id)
@@ -239,7 +239,7 @@ async function updateProducto(id, producto) {
 }
 
 async function deleteProducto(id) {
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from('productos')
     .delete()
     .eq('id', id);
@@ -250,7 +250,7 @@ async function deleteProducto(id) {
 
 // --- BADGES ---
 async function getBadges() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('badges')
     .select('*');
 
@@ -300,14 +300,14 @@ async function guardarMenuCompleto(menuData) {
 
     // Para categorías y productos, usar upsert
     if (menuData.categorias && menuData.categorias.length > 0) {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('categorias')
         .upsert(menuData.categorias, { onConflict: 'id' });
       if (error) throw error;
     }
 
     if (menuData.productos && menuData.productos.length > 0) {
-      const { error } = await supabase
+      const { error } = await supabaseClient
         .from('productos')
         .upsert(menuData.productos, { onConflict: 'id' });
       if (error) throw error;
