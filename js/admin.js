@@ -435,8 +435,37 @@ function inicializarNavegacion() {
 }
 
 function toggleSidebar() {
-  document.querySelector('.sidebar').classList.toggle('open');
+  const sidebar = document.querySelector('.sidebar');
+  sidebar.classList.toggle('open');
+
+  // Si abrimos el sidebar, agregar listener para cerrar al hacer clic fuera
+  if (sidebar.classList.contains('open')) {
+    setTimeout(() => {
+      document.addEventListener('click', cerrarSidebarAlClickFuera);
+    }, 100);
+  }
 }
+
+// Cerrar sidebar al hacer clic fuera (móvil)
+function cerrarSidebarAlClickFuera(e) {
+  const sidebar = document.querySelector('.sidebar');
+  const toggleBtn = document.querySelector('.btn-menu-toggle');
+
+  if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+    sidebar.classList.remove('open');
+    document.removeEventListener('click', cerrarSidebarAlClickFuera);
+  }
+}
+
+// Cerrar sidebar al seleccionar una opción en móvil
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 1024) {
+      document.querySelector('.sidebar').classList.remove('open');
+      document.removeEventListener('click', cerrarSidebarAlClickFuera);
+    }
+  });
+});
 
 // === RENDERIZADO ===
 function renderizarTodo() {

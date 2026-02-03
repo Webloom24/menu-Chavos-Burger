@@ -43,12 +43,29 @@
   box-sizing: border-box;
 }
 
+/* Prevenir scroll horizontal en móvil */
+html, body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-main);
   color: var(--text-primary);
   display: flex;
   min-height: 100vh;
+  min-height: -webkit-fill-available; /* Fix para iOS */
+}
+
+/* Prevenir zoom en inputs en iOS */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Mejorar touch targets */
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* === SIDEBAR === */
@@ -77,11 +94,42 @@ body {
   font-weight: 700;
 }
 
+.sidebar-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .version {
   font-size: 11px;
   background: var(--admin-primary);
   padding: 2px 8px;
   border-radius: 10px;
+}
+
+.btn-close-sidebar {
+  display: none;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-light);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-close-sidebar:hover {
+  background: var(--admin-danger);
+}
+
+@media (max-width: 1024px) {
+  .btn-close-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .sidebar-nav {
@@ -1008,13 +1056,28 @@ body {
 .toast.info { background: var(--admin-info); }
 
 /* === RESPONSIVE === */
+
+/* Tablet - 1024px */
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
   }
 
   .sidebar.open {
     transform: translateX(0);
+  }
+
+  /* Overlay cuando el sidebar está abierto */
+  .sidebar.open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 260px;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
   }
 
   .main-content {
@@ -1038,53 +1101,530 @@ body {
     flex: 1;
     min-width: auto;
   }
+
+  .content-header {
+    padding: 16px 20px;
+  }
+
+  .header-titles h2 {
+    font-size: 18px;
+  }
 }
 
+/* Mobile Landscape & Small Tablets - 768px */
 @media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .btn-save {
+    flex: 1;
+  }
+
+  .status-indicator {
+    flex-shrink: 0;
+  }
+
   .section-header {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
   }
 
   .section-header .btn-primary {
     width: 100%;
     justify-content: center;
+    padding: 14px 20px;
+  }
+
+  .filter-group {
+    flex-direction: column;
+  }
+
+  .filter-group select,
+  .filter-group input {
+    width: 100%;
   }
 
   .cards-grid {
     grid-template-columns: 1fr;
   }
 
-  .data-table {
-    font-size: 12px;
+  /* Tabla responsive - modo cards en móvil */
+  .table-container {
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
   }
 
-  .data-table th,
+  .data-table {
+    display: block;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .data-table tr {
+    display: flex;
+    flex-wrap: wrap;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    gap: 8px;
+  }
+
+  .data-table tr:hover {
+    background: var(--bg-card);
+  }
+
   .data-table td {
-    padding: 10px 8px;
+    border: none;
+    padding: 4px 0;
+  }
+
+  /* Orden de los elementos en la card */
+  .data-table td:nth-child(1) { /* Orden */
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  .data-table td:nth-child(2) { /* Imagen */
+    order: 1;
+    width: 50px;
+  }
+
+  .data-table td:nth-child(3) { /* Nombre */
+    order: 2;
+    flex: 1;
+    font-size: 15px;
+  }
+
+  .data-table td:nth-child(4) { /* Categoría */
+    order: 4;
+    width: 100%;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .data-table td:nth-child(4)::before {
+    content: 'Categoría: ';
+    font-weight: 600;
+  }
+
+  .data-table td:nth-child(5) { /* Precio */
+    order: 3;
+    font-weight: 700;
+    color: var(--admin-primary);
+  }
+
+  .data-table td:nth-child(6) { /* Badge */
+    order: 5;
+    width: auto;
+  }
+
+  .data-table td:nth-child(7) { /* Visible */
+    order: 6;
+  }
+
+  .data-table td:nth-child(8) { /* Acciones */
+    order: 7;
+    width: 100%;
+    padding-top: 12px;
+    margin-top: 8px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .actions-cell {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .btn-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .order-controls {
+    flex-direction: row;
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+  }
+
+  .order-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .order-controls span {
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Modal responsive */
+  .modal {
+    padding: 0;
+    align-items: flex-end;
   }
 
   .modal-content {
-    max-height: 100vh;
-    border-radius: 0;
+    max-height: 90vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    width: 100%;
+    max-width: 100%;
   }
-}
 
-@media (max-width: 480px) {
-  .main-header {
+  .modal-large {
+    max-width: 100%;
+  }
+
+  .modal-body {
+    padding: 20px 16px;
+    max-height: calc(90vh - 140px);
+    overflow-y: auto;
+  }
+
+  .modal-footer {
     padding: 12px 16px;
+    flex-direction: column-reverse;
+    gap: 8px;
   }
 
-  .content-section {
+  .modal-footer button {
+    width: 100%;
+    padding: 14px;
+  }
+
+  /* Category cards responsive */
+  .category-card {
     padding: 16px;
   }
 
-  .table-container {
-    overflow-x: auto;
+  .card-header {
+    flex-wrap: wrap;
   }
 
-  .data-table {
-    min-width: 600px;
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+
+  .card-title h4 {
+    font-size: 15px;
+  }
+
+  .card-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .card-actions {
+    justify-content: space-between;
+  }
+
+  .card-actions .btn-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Config form */
+  .config-form {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .config-form h3 {
+    font-size: 18px;
+  }
+
+  /* Image tabs */
+  .image-tabs {
+    flex-wrap: wrap;
+  }
+
+  .img-tab {
+    flex: 1 1 auto;
+    min-width: 80px;
+    padding: 12px 8px;
+  }
+
+  /* Toast en móvil */
+  #toast-container {
+    top: auto;
+    bottom: 20px;
+    left: 16px;
+    right: 16px;
+  }
+
+  .toast {
+    width: 100%;
+  }
+}
+
+/* Mobile Portrait - 480px */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+  }
+
+  .sidebar.open::before {
+    display: none;
+  }
+
+  .sidebar-header {
+    padding: 20px 16px;
+  }
+
+  .sidebar-header h1 {
+    font-size: 18px;
+  }
+
+  .sidebar-nav {
+    padding: 12px 8px;
+  }
+
+  .nav-item {
+    padding: 12px 14px;
+  }
+
+  .sidebar-footer {
+    padding: 12px 8px;
+    gap: 6px;
+  }
+
+  .sidebar-footer button,
+  .sidebar-footer a {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .content-header {
+    padding: 12px 16px;
+  }
+
+  .header-titles h2 {
+    font-size: 16px;
+  }
+
+  .header-titles p {
+    font-size: 12px;
+  }
+
+  .btn-menu-toggle {
+    padding: 6px;
+    font-size: 22px;
+  }
+
+  .content-section {
+    padding: 12px;
+  }
+
+  .section-header h3 {
+    font-size: 16px;
+  }
+
+  /* Botones más grandes para touch */
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
+  .btn-save {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .status-indicator {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .status-indicator .status-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Form inputs más grandes */
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 14px;
+    font-size: 16px; /* Previene zoom en iOS */
+  }
+
+  .form-group label {
+    font-size: 12px;
+  }
+
+  .checkbox-label {
+    margin-top: 16px;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Tabla en modo card simplificado */
+  .data-table td:nth-child(1) { /* Orden - oculto en móvil pequeño */
+    display: none;
+  }
+
+  .data-table td:nth-child(2) { /* Imagen */
+    width: 44px;
+  }
+
+  .product-thumb {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Visibility toggle más grande */
+  .visibility-toggle {
+    width: 50px;
+    height: 28px;
+    border-radius: 14px;
+  }
+
+  .visibility-toggle::after {
+    width: 24px;
+    height: 24px;
+  }
+
+  .visibility-toggle.active::after {
+    transform: translateX(22px);
+  }
+
+  /* Badges */
+  .badge-cell {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  /* Modal login responsive */
+  .modal-login .modal-content {
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 100vh;
+  }
+
+  .modal-login .modal-header {
+    padding: 20px;
+  }
+
+  .modal-login .modal-header h3 {
+    font-size: 20px;
+  }
+
+  .modal-login .modal-body {
+    padding: 24px 16px;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+  }
+
+  .btn-login-submit {
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  /* Cards de categoría */
+  .card-order-controls {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .card-order-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+/* Landscape phones */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal {
+    align-items: center;
+    padding: 10px;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+    border-radius: var(--radius-md);
+  }
+
+  .modal-body {
+    max-height: calc(95vh - 120px);
+  }
+}
+
+/* Safe area para dispositivos con notch */
+@supports (padding: max(0px)) {
+  .sidebar {
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+
+  .content-header {
+    padding-top: max(20px, env(safe-area-inset-top));
+  }
+
+  .modal-footer {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  #toast-container {
+    bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Mejoras de accesibilidad touch */
+@media (hover: none) and (pointer: coarse) {
+  .btn-icon {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .order-btn {
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .visibility-toggle {
+    min-width: 50px;
+    min-height: 28px;
+  }
+
+  .nav-item {
+    min-height: 48px;
   }
 }
 
