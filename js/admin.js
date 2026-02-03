@@ -1044,6 +1044,39 @@ async function sincronizarConSupabase() {
   }
 }
 
+// Resetear datos y forzar sincronización limpia
+async function resetearYSincronizar() {
+  const confirmar = confirm('⚠️ ATENCIÓN: Esto eliminará todos los datos actuales y los reemplazará con los datos por defecto.\n\n¿Estás seguro?');
+  if (!confirmar) return;
+
+  actualizarIndicadorEstado('saving');
+  mostrarToast('Reseteando datos...', 'info');
+
+  try {
+    // Cargar datos por defecto
+    menuData = obtenerDatosCompletos();
+
+    // Limpiar localStorage
+    localStorage.removeItem(STORAGE_KEY);
+
+    // Sincronizar a Supabase
+    if (!modoOffline && typeof SupabaseDB !== 'undefined') {
+      await SupabaseDB.guardarMenuCompleto(menuData);
+      mostrarToast('Datos reseteados y sincronizados a la nube', 'success');
+    } else {
+      mostrarToast('Datos reseteados localmente', 'success');
+    }
+
+    guardarEnLocalStorage();
+    finalizarCarga();
+    renderizarTodo();
+    actualizarIndicadorEstado('saved');
+  } catch (error) {
+    console.error('Error reseteando datos:', error);
+    mostrarToast('Error al resetear. Intenta de nuevo.', 'error');
+  }
+}
+
 // === MODALES DE CONFIRMACIÓN ===
 function mostrarConfirmacion(mensaje, callback) {
   document.getElementById('confirm-message').textContent = mensaje;
