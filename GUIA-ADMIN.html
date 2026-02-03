@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de Administración - Chavos Burger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #d94e28;
+      --primary-dark: #c23d1f;
+      --success: #25d366;
+      --warning: #f5a623;
+      --info: #3498db;
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --text: #2d3436;
+      --text-muted: #636e72;
+      --border: #dfe6e9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .section {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .section h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section h3 {
+      font-size: 18px;
+      margin: 24px 0 12px;
+      color: var(--text);
+    }
+
+    .section p {
+      margin-bottom: 12px;
+      color: var(--text-muted);
+    }
+
+    .steps {
+      counter-reset: step;
+      list-style: none;
+    }
+
+    .steps li {
+      position: relative;
+      padding-left: 50px;
+      margin-bottom: 20px;
+      min-height: 40px;
+    }
+
+    .steps li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .steps li strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .tip {
+      background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+      border-left: 4px solid var(--warning);
+      padding: 16px 20px;
+      border-radius: 0 12px 12px 0;
+      margin: 16px 0;
+    }
+
+    .tip strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #856404;
+    }
+
+    .info {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      border-left: 4px solid var(--info);
+      padding: 16px 20px;
+      border-radius: 0 12px 12px 0;
+      margin: 16px 0;
+    }
+
+    .info strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #1565c0;
+    }
+
+    .success-box {
+      background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+      border-left: 4px solid var(--success);
+      padding: 16px 20px;
+      border-radius: 0 12px 12px 0;
+      margin: 16px 0;
+    }
+
+    .success-box strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #2e7d32;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .code {
+      background: #2d3436;
+      color: #dfe6e9;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    .highlight {
+      color: var(--warning);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .emoji-big {
+      font-size: 48px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .header h1 { font-size: 24px; }
+      .section { padding: 20px; }
+      .steps li { padding-left: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🍔 Guía de Administración</h1>
+    <p>Aprende a gestionar el menú de Chavos Burger</p>
+  </header>
+
+  <div class="container">
+    <!-- INICIO RÁPIDO -->
+    <section class="section">
+      <h2>🚀 Inicio Rápido</h2>
+
+      <div class="btn-grid">
+        <a href="admin.html" class="btn btn-primary">
+          <span>⚙️</span> Abrir Panel Admin
+        </a>
+        <a href="index.html" target="_blank" class="btn btn-secondary">
+          <span>👁️</span> Ver Menú Público
+        </a>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="section">
+      <h2>📖 ¿Cómo Funciona?</h2>
+
+      <p>El sistema de administración funciona 100% local en tu navegador. Los cambios se guardan en tu dispositivo y para publicarlos debes subir el archivo JSON a GitHub.</p>
+
+      <div class="info">
+        <strong>ℹ️ Flujo de trabajo</strong>
+        1. Haces cambios en el admin local → 2. Exportas el JSON → 3. Subes a GitHub → 4. ¡Menú actualizado!
+      </div>
+
+      <h3>Archivos importantes</h3>
+      <table>
+        <tr>
+          <th>Archivo</th>
+          <th>Descripción</th>
+        </tr>
+        <tr>
+          <td><code>admin.html</code></td>
+          <td>Panel de administración (ábrelo en tu navegador)</td>
+        </tr>
+        <tr>
+          <td><code>data/menu-data.json</code></td>
+          <td>Todos los datos del menú (productos, categorías, config)</td>
+        </tr>
+        <tr>
+          <td><code>index.html</code></td>
+          <td>El menú público que ven tus clientes</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- GESTIONAR PRODUCTOS -->
+    <section class="section">
+      <h2>📦 Gestionar Productos</h2>
+
+      <h3>Crear un producto nuevo</h3>
+      <ol class="steps">
+        <li>
+          <strong>Abre el panel de admin</strong>
+          Ve a <code>admin.html</code> y asegúrate de estar en la sección "Productos"
+        </li>
+        <li>
+          <strong>Clic en "+ Nuevo Producto"</strong>
+          Se abrirá un formulario para llenar los datos
+        </li>
+        <li>
+          <strong>Llena la información</strong>
+          Nombre, precio, descripción, categoría, badge (opcional) e imagen (opcional)
+        </li>
+        <li>
+          <strong>Guarda el producto</strong>
+          Clic en "Guardar" - el producto aparecerá en la lista
+        </li>
+      </ol>
+
+      <h3>Opciones de imagen</h3>
+      <table>
+        <tr>
+          <th>Opción</th>
+          <th>Cuándo usarla</th>
+        </tr>
+        <tr>
+          <td><strong>URL Externa</strong></td>
+          <td>Si la imagen está en internet (ej: <code>https://example.com/imagen.jpg</code>)</td>
+        </tr>
+        <tr>
+          <td><strong>Ruta Local</strong></td>
+          <td>Si la imagen está en tu proyecto (ej: <code>images/mi-producto.jpg</code>)</td>
+        </tr>
+        <tr>
+          <td><strong>Subir Archivo</strong></td>
+          <td>Sube desde tu dispositivo (máx 500KB, se convierte a base64)</td>
+        </tr>
+      </table>
+
+      <div class="tip">
+        <strong>💡 Tip</strong>
+        Si subes muchas imágenes, es mejor usar URLs externas o rutas locales para que el archivo JSON no se vuelva muy pesado.
+      </div>
+    </section>
+
+    <!-- GESTIONAR CATEGORÍAS -->
+    <section class="section">
+      <h2>📂 Gestionar Categorías</h2>
+
+      <h3>Crear una categoría nueva</h3>
+      <ol class="steps">
+        <li>
+          <strong>Ve a la sección "Categorías"</strong>
+          Clic en el menú lateral
+        </li>
+        <li>
+          <strong>Clic en "+ Nueva Categoría"</strong>
+          Se abrirá el formulario
+        </li>
+        <li>
+          <strong>Define un ID único</strong>
+          Usa letras minúsculas y guiones (ej: <code>postres-especiales</code>)
+        </li>
+        <li>
+          <strong>Agrega nombre, emoji e icono</strong>
+          El emoji aparece en el menú, el icono es la imagen de la sección
+        </li>
+      </ol>
+
+      <div class="tip">
+        <strong>💡 Tip</strong>
+        No puedes eliminar una categoría que tiene productos. Primero mueve o elimina los productos.
+      </div>
+
+      <h3>Ordenar categorías</h3>
+      <p>Usa los botones ▲ y ▼ en cada tarjeta de categoría para cambiar el orden. Las categorías con menor número aparecen primero en el menú.</p>
+    </section>
+
+    <!-- PUBLICAR CAMBIOS -->
+    <section class="section">
+      <h2>🌐 Publicar Cambios en GitHub</h2>
+
+      <div class="emoji-big">📱 → 📥 → 🐙 → ✅</div>
+
+      <h3>Desde el celular</h3>
+      <ol class="steps">
+        <li>
+          <strong>Haz tus cambios en el admin</strong>
+          Edita productos, categorías o configuración
+        </li>
+        <li>
+          <strong>Clic en "Exportar Datos"</strong>
+          Se descargará <code>menu-data.json</code> a tu celular
+        </li>
+        <li>
+          <strong>Abre GitHub</strong>
+          Usa la app de GitHub o el navegador
+        </li>
+        <li>
+          <strong>Ve a tu repositorio → data/</strong>
+          Navega hasta la carpeta <code>data</code>
+        </li>
+        <li>
+          <strong>Sube/reemplaza menu-data.json</strong>
+          En GitHub web: "Add file" → "Upload files"
+        </li>
+        <li>
+          <strong>¡Listo!</strong>
+          GitHub Pages se actualiza automáticamente en 1-2 minutos
+        </li>
+      </ol>
+
+      <div class="success-box">
+        <strong>✅ Verificar cambios</strong>
+        Después de subir, abre tu menú público y verifica que los cambios se aplicaron correctamente.
+      </div>
+    </section>
+
+    <!-- SINCRONIZACIÓN -->
+    <section class="section">
+      <h2>🔄 Sincronización</h2>
+
+      <h3>¿Qué es "Sincronizar GitHub"?</h3>
+      <p>Este botón <strong>descarta todos tus cambios locales</strong> y descarga los datos más recientes desde GitHub. Úsalo si:</p>
+      <ul style="margin-left: 20px; margin-top: 8px;">
+        <li>Hiciste cambios en otro dispositivo</li>
+        <li>Quieres descartar cambios que no guardaste</li>
+        <li>El menú local está desactualizado</li>
+      </ul>
+
+      <div class="tip">
+        <strong>⚠️ Cuidado</strong>
+        Sincronizar borra todos los cambios locales que no hayas exportado. Asegúrate de exportar primero si quieres conservarlos.
+      </div>
+    </section>
+
+    <!-- BADGES -->
+    <section class="section">
+      <h2>🏷️ Tipos de Badges</h2>
+
+      <table>
+        <tr>
+          <th>Badge</th>
+          <th>Cuándo usarlo</th>
+        </tr>
+        <tr>
+          <td><span style="background:#fff3cd;color:#856404;padding:4px 10px;border-radius:10px;font-size:12px;">POPULAR</span></td>
+          <td>Productos más vendidos o favoritos de los clientes</td>
+        </tr>
+        <tr>
+          <td><span style="background:#d4edda;color:#155724;padding:4px 10px;border-radius:10px;font-size:12px;">NUEVO</span></td>
+          <td>Productos recién agregados al menú</td>
+        </tr>
+        <tr>
+          <td><span style="background:#cce5ff;color:#004085;padding:4px 10px;border-radius:10px;font-size:12px;">⭐ RECOMENDADO</span></td>
+          <td>Especialidades de la casa o recomendaciones del chef</td>
+        </tr>
+        <tr>
+          <td><span style="background:#e2d4f0;color:#563d7c;padding:4px 10px;border-radius:10px;font-size:12px;">👑 PREMIUM</span></td>
+          <td>Productos de alta gama o porciones especiales</td>
+        </tr>
+        <tr>
+          <td><span style="background:#f8d7da;color:#721c24;padding:4px 10px;border-radius:10px;font-size:12px;">🌶️ PICANTE</span></td>
+          <td>Productos con ingredientes picantes</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- SOLUCIÓN DE PROBLEMAS -->
+    <section class="section">
+      <h2>🔧 Solución de Problemas</h2>
+
+      <h3>Los cambios no aparecen en el menú público</h3>
+      <ol style="margin-left: 20px;">
+        <li>Verifica que subiste el archivo a GitHub correctamente</li>
+        <li>Espera 1-2 minutos para que GitHub Pages se actualice</li>
+        <li>Limpia la caché del navegador (Ctrl+Shift+R o Cmd+Shift+R)</li>
+      </ol>
+
+      <h3>El admin no carga los datos</h3>
+      <ol style="margin-left: 20px;">
+        <li>Verifica que el archivo <code>data/menu-data.json</code> existe</li>
+        <li>Asegúrate de que el JSON tiene formato válido</li>
+        <li>Intenta con "Sincronizar GitHub"</li>
+      </ol>
+
+      <h3>Error al subir imagen</h3>
+      <p>Las imágenes deben pesar menos de 500KB. Usa herramientas online para comprimir imágenes grandes.</p>
+    </section>
+
+    <!-- ESTRUCTURA DEL JSON -->
+    <section class="section">
+      <h2>📄 Estructura del JSON</h2>
+
+      <p>El archivo <code>menu-data.json</code> tiene esta estructura:</p>
+
+      <div class="code">
+{
+  <span class="highlight">"config"</span>: {
+    "nombreRestaurante": "Chavos Burger",
+    "slogan": "...",
+    "whatsapp": "573183752974",
+    ...
+  },
+  <span class="highlight">"categorias"</span>: [
+    { "id": "burgers", "nombre": "Burgers", ... }
+  ],
+  <span class="highlight">"productos"</span>: [
+    { "id": 1, "nombre": "Vecindad", "precio": 18000, ... }
+  ],
+  <span class="highlight">"badges"</span>: { ... }
+}
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section class="section">
+      <h2>💬 ¿Necesitas Ayuda?</h2>
+
+      <p>Si tienes dudas o problemas con el sistema de administración, contacta al desarrollador:</p>
+
+      <div class="btn-grid">
+        <a href="mailto:soporte@webloom.com" class="btn btn-secondary">
+          <span>✉️</span> Enviar Email
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <p>Sistema de Administración desarrollado por <strong>Webloom</strong></p>
+    <p>© 2025 Chavos Burger - Todos los derechos reservados</p>
+  </footer>
+</body>
+</html>

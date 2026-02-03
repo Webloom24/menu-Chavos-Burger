@@ -65,17 +65,303 @@ let wizardCantidad = 1;
 let wizardConfiguraciones = []; // Array de configuraciones [{ ingredientes: [...], ingredientesEliminados: [...] }]
 
 // Número de WhatsApp (CAMBIAR POR EL REAL)
-const WHATSAPP_NUMBER = "573183752974";
+let WHATSAPP_NUMBER = "573183752974";
+
+// === CARGA DINÁMICA DEL MENÚ ===
+const MENU_DATA_URL = 'data/menu-data.json';
+const MENU_STORAGE_KEY = 'chavos-menu-data';
+const MENU_CACHE_KEY = 'chavos-menu-cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos de caché
+let menuData = null;
+let menuCargadoDinamicamente = false;
 
 // === INICIALIZACIÓN ===
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  // Inicializar Supabase si está disponible
+  if (typeof SupabaseDB !== 'undefined') {
+    SupabaseDB.init();
+  }
+
+  // Intentar cargar menú dinámico
+  await cargarMenuDinamico();
+
   inicializarBuscador();
   inicializarFiltros();
   inicializarNavegacion();
   inicializarCardPedido();
   cargarCarritoDesdeLocalStorage();
   animarElementos();
+
+  // Escuchar cambios de localStorage (sincronización entre pestañas)
+  window.addEventListener('storage', function(e) {
+    if (e.key === MENU_STORAGE_KEY || e.key === MENU_CACHE_KEY) {
+      location.reload();
+    }
+  });
 });
+
+// === CARGAR MENÚ DINÁMICO ===
+async function cargarMenuDinamico() {
+  // 1. Verificar caché válido primero (para carga rápida)
+  const cachedData = obtenerCacheValido();
+  if (cachedData) {
+    menuData = cachedData;
+    renderizarMenuCompleto();
+    // Actualizar en segundo plano desde Supabase
+    actualizarDesdeSupabaseEnSegundoPlano();
+    return;
+  }
+
+  // 2. Intentar cargar desde Supabase (datos en la nube)
+  if (typeof SupabaseDB !== 'undefined') {
+    try {
+      menuData = await SupabaseDB.cargarMenuCompleto(true); // true = solo visibles
+      guardarEnCache(menuData);
+      renderizarMenuCompleto();
+      console.log('Menú cargado desde Supabase');
+      return;
+    } catch (e) {
+      console.warn('Error cargando desde Supabase:', e);
+    }
+  }
+
+  // 3. Intentar desde localStorage (caché antiguo)
+  const localData = localStorage.getItem(MENU_STORAGE_KEY);
+  if (localData) {
+    try {
+      menuData = JSON.parse(localData);
+      renderizarMenuCompleto();
+      return;
+    } catch (e) {
+      console.warn('Error parsing localStorage:', e);
+    }
+  }
+
+  // 4. Intentar desde JSON externo (fallback)
+  try {
+    const response = await fetch(MENU_DATA_URL);
+    if (response.ok) {
+      menuData = await response.json();
+      renderizarMenuCompleto();
+      return;
+    }
+  } catch (e) {
+    console.warn('No se pudo cargar menu-data.json, usando HTML estático');
+  }
+
+  // 5. Usar HTML estático (ya está renderizado)
+  menuCargadoDinamicamente = false;
+}
+
+// Obtener caché válido (no expirado)
+function obtenerCacheValido() {
+  try {
+    const cacheStr = localStorage.getItem(MENU_CACHE_KEY);
+    if (!cacheStr) return null;
+
+    const cache = JSON.parse(cacheStr);
+    const ahora = Date.now();
+
+    if (ahora - cache.timestamp < CACHE_DURATION) {
+      return cache.data;
+    }
+  } catch (e) {
+    console.warn('Error leyendo caché:', e);
+  }
+  return null;
+}
+
+// Guardar en caché con timestamp
+function guardarEnCache(data) {
+  try {
+    const cache = {
+      timestamp: Date.now(),
+      data: data
+    };
+    localStorage.setItem(MENU_CACHE_KEY, JSON.stringify(cache));
+  } catch (e) {
+    console.warn('Error guardando caché:', e);
+  }
+}
+
+// Actualizar desde Supabase en segundo plano (sin bloquear UI)
+async function actualizarDesdeSupabaseEnSegundoPlano() {
+  if (typeof SupabaseDB === 'undefined') return;
+
+  try {
+    const nuevosDatos = await SupabaseDB.cargarMenuCompleto(true);
+    guardarEnCache(nuevosDatos);
+
+    // Si hay cambios significativos, actualizar UI
+    if (JSON.stringify(nuevosDatos) !== JSON.stringify(menuData)) {
+      menuData = nuevosDatos;
+      renderizarMenuCompleto();
+      console.log('Menú actualizado desde Supabase');
+    }
+  } catch (e) {
+    console.warn('Error actualizando desde Supabase:', e);
+  }
+}
+
+// === RENDERIZAR MENÚ COMPLETO ===
+function renderizarMenuCompleto() {
+  if (!menuData) return;
+
+  menuCargadoDinamicamente = true;
+
+  // Actualizar configuración
+  if (menuData.config) {
+    WHATSAPP_NUMBER = menuData.config.whatsapp || WHATSAPP_NUMBER;
+    actualizarConfiguracionUI();
+  }
+
+  // Renderizar categorías y productos
+  renderizarCategoriasYProductos();
+
+  // Limpiar caché
+  productosCache = null;
+  seccionesCache = null;
+}
+
+function actualizarConfiguracionUI() {
+  const config = menuData.config;
+
+  // Actualizar hero
+  const heroTitle = document.querySelector('.hero-title');
+  const heroSubtitle = document.querySelector('.hero-subtitle');
+  if (heroTitle && config.nombreRestaurante) heroTitle.textContent = config.nombreRestaurante;
+  if (heroSubtitle && config.slogan) heroSubtitle.textContent = config.slogan;
+
+  // Actualizar footer
+  const footerTitle = document.querySelector('.footer-content h3');
+  const footerSlogan = document.querySelector('.footer-content > p');
+  const footerPhone = document.querySelector('.footer-info a[href^="tel:"]');
+  const footerHorario = document.querySelector('.footer-info');
+
+  if (footerTitle && config.nombreRestaurante) footerTitle.textContent = config.nombreRestaurante;
+  if (footerSlogan && config.slogan) footerSlogan.textContent = config.slogan;
+  if (footerPhone && config.telefono) {
+    footerPhone.textContent = config.telefono;
+    footerPhone.href = `tel:+${config.whatsapp}`;
+  }
+}
+
+function renderizarCategoriasYProductos() {
+  const mainContent = document.querySelector('.main-content');
+  if (!mainContent) return;
+
+  // Limpiar secciones existentes
+  mainContent.innerHTML = '';
+
+  // Ordenar categorías
+  const categoriasOrdenadas = menuData.categorias
+    .filter(c => c.visible)
+    .sort((a, b) => a.orden - b.orden);
+
+  // Crear cada sección
+  categoriasOrdenadas.forEach(categoria => {
+    const productosCategoria = menuData.productos
+      .filter(p => p.categoria === categoria.id && p.visible)
+      .sort((a, b) => a.orden - b.orden);
+
+    if (productosCategoria.length === 0) return;
+
+    const seccion = crearSeccionCategoria(categoria, productosCategoria);
+    mainContent.appendChild(seccion);
+  });
+
+  // Actualizar navegación
+  actualizarNavegacionDinamica(categoriasOrdenadas);
+}
+
+function crearSeccionCategoria(categoria, productos) {
+  const section = document.createElement('section');
+  section.id = categoria.id;
+  section.className = 'menu-section';
+  section.dataset.section = categoria.id;
+
+  // Header de sección
+  const header = document.createElement('div');
+  header.className = 'section-header';
+  header.innerHTML = `
+    <img src="${categoria.icono}" alt="${categoria.nombre}" class="section-icon" loading="lazy">
+    <div>
+      <h2 class="section-title">${categoria.nombre}</h2>
+      <p class="section-subtitle">${categoria.subtitulo || ''}</p>
+    </div>
+  `;
+
+  // Grid de productos
+  const grid = document.createElement('div');
+  grid.className = 'products-grid';
+
+  productos.forEach(producto => {
+    const card = crearProductoCard(producto);
+    grid.appendChild(card);
+  });
+
+  section.appendChild(header);
+  section.appendChild(grid);
+
+  return section;
+}
+
+function crearProductoCard(producto) {
+  const article = document.createElement('article');
+  article.className = 'product-card';
+  if (producto.imagen) article.classList.add('has-image');
+
+  article.dataset.price = producto.precio;
+  article.dataset.category = obtenerCategoriaFiltro(producto.precio);
+
+  // Badge
+  let badgeHtml = '';
+  if (producto.badge && menuData.badges[producto.badge]) {
+    const badge = menuData.badges[producto.badge];
+    badgeHtml = `<div class="product-badge ${badge.clase}">${badge.texto}</div>`;
+  }
+
+  // Imagen
+  let imagenHtml = '';
+  if (producto.imagen) {
+    imagenHtml = `<div class="product-image"><img src="${producto.imagen}" alt="${producto.nombre}" loading="lazy"></div>`;
+  }
+
+  article.innerHTML = `
+    ${badgeHtml}
+    ${imagenHtml}
+    <h3 class="product-name">${producto.nombre}</h3>
+    <p class="product-description">${producto.descripcion}</p>
+    <p class="product-price">$${producto.precio.toLocaleString('es-CO')}</p>
+    <button class="btn-primary" onclick="abrirModal(this)">Pedir ahora</button>
+  `;
+
+  return article;
+}
+
+function obtenerCategoriaFiltro(precio) {
+  if (precio < 20000) return 'economico';
+  if (precio <= 30000) return 'medio';
+  return 'premium';
+}
+
+function actualizarNavegacionDinamica(categorias) {
+  // Actualizar navbar principal
+  const navContainer = document.querySelector('.nav-container');
+  if (navContainer) {
+    navContainer.innerHTML = categorias.map(cat =>
+      `<a href="#${cat.id}" class="nav-link">${cat.emoji} ${cat.nombre}</a>`
+    ).join('');
+  }
+
+  // Actualizar menú flotante
+  const floatingNav = document.querySelector('.floating-menu-nav');
+  if (floatingNav) {
+    floatingNav.innerHTML = categorias.map(cat =>
+      `<a href="#${cat.id}" onclick="navegarASeccion('${cat.id}', event)">${cat.emoji} ${cat.nombre}</a>`
+    ).join('');
+  }
+}
 // === BUSCADOR MEJORADO ===
 let searchTimeout = null;
 let searchHistory = JSON.parse(localStorage.getItem('chavos-search-history') || '[]');

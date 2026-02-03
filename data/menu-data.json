@@ -1,0 +1,509 @@
+{
+  "config": {
+    "nombreRestaurante": "Chavos Burger",
+    "slogan": "se me chispoteó... pero de lo rica 😋",
+    "whatsapp": "573183752974",
+    "telefono": "318 375 2974",
+    "horario": "Lun–Dom: 5:00 PM – 10:30 PM",
+    "diaCerrado": "Martes",
+    "desarrolladoPor": "Webloom"
+  },
+  "categorias": [
+    {
+      "id": "burgers",
+      "nombre": "Burgers",
+      "emoji": "🍔",
+      "icono": "images/icon-burgers.png",
+      "subtitulo": "Acompañadas con papas a la francesa",
+      "orden": 1,
+      "visible": true
+    },
+    {
+      "id": "perros",
+      "nombre": "Perros",
+      "emoji": "🌭",
+      "icono": "images/icon-perros.png",
+      "subtitulo": "Acompañados con papas a la francesa",
+      "orden": 2,
+      "visible": true
+    },
+    {
+      "id": "salchipapas",
+      "nombre": "Salchipapas",
+      "emoji": "🍟",
+      "icono": "images/icon-salchipapas.png",
+      "subtitulo": "Con papas a la francesa",
+      "orden": 3,
+      "visible": true
+    },
+    {
+      "id": "delicias-chavos",
+      "nombre": "Delicias Chavos",
+      "emoji": "✨",
+      "icono": "images/icon-delicias.png",
+      "subtitulo": "Especialidades de la casa",
+      "orden": 4,
+      "visible": true
+    },
+    {
+      "id": "sandwich",
+      "nombre": "Sándwich",
+      "emoji": "🥪",
+      "icono": "images/icon-sandwich.png",
+      "subtitulo": "Acompañados con papas a la francesa",
+      "orden": 5,
+      "visible": true
+    },
+    {
+      "id": "desgranados",
+      "nombre": "Desgranados",
+      "emoji": "🌽",
+      "icono": "images/icon-desgranados.png",
+      "subtitulo": "Con papa francesa",
+      "orden": 6,
+      "visible": true
+    }
+  ],
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Vecindad",
+      "descripcion": "Carne 150gr, lechuga, tomate, cebolla, queso",
+      "precio": 18000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 1,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 2,
+      "nombre": "Doña Clotilde",
+      "descripcion": "Carne 150gr, pollo desmechado, queso, lechuga, tomate, cebolla",
+      "precio": 20000,
+      "categoria": "burgers",
+      "badge": "popular",
+      "orden": 2,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 3,
+      "nombre": "Jaimito",
+      "descripcion": "Carne 150gr, tocineta, huevo, queso, lechuga, tomate, cebolla",
+      "precio": 20000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 3,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 4,
+      "nombre": "Chilindrina",
+      "descripcion": "Carne 150gr, 2 tocinetas, queso, lechuga, tomate, cebolla",
+      "precio": 20000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 4,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 5,
+      "nombre": "Chapulín",
+      "descripcion": "Carne 150gr, pollo desmechado, tocineta, queso, lechuga, tomate, cebolla",
+      "precio": 23000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 5,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 6,
+      "nombre": "Dr Chapatin",
+      "descripcion": "Carne 150gr, pollo desmechado, salchicha americana, queso, lechuga, tomate, cebolla",
+      "precio": 23000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 6,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 7,
+      "nombre": "Popis",
+      "descripcion": "Carne 150gr, pollo desmechado, chorizo artesanal, tocineta, maíz, queso, lechuga, tomate, cebolla",
+      "precio": 25000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 7,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 8,
+      "nombre": "Don Barriga",
+      "descripcion": "Doble carne 150gr, tocineta, queso, lechuga, tomate, cebolla",
+      "precio": 26000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 8,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 9,
+      "nombre": "La Minina",
+      "descripcion": "Doble carne 150gr, doble pollo desmechado, queso, lechuga, tomate, cebolla",
+      "precio": 29000,
+      "categoria": "burgers",
+      "badge": null,
+      "orden": 9,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 10,
+      "nombre": "Chavos",
+      "descripcion": "Carne 150gr, carne desmechada, chorizo, tocineta, nachos, jalapeños, guacamole, queso, lechuga, tomate, cebolla",
+      "precio": 29000,
+      "categoria": "burgers",
+      "badge": "recomendado",
+      "orden": 10,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 11,
+      "nombre": "Godines",
+      "descripcion": "Doble carne 150gr, carne desmechada, pollo desmechado, tocineta, queso, aros de cebolla, chorizo artesanal, lechuga, tomate, cebolla",
+      "precio": 33000,
+      "categoria": "burgers",
+      "badge": "premium",
+      "orden": 11,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 12,
+      "nombre": "Vecindad",
+      "descripcion": "Salchicha americana, queso fundido, cebolla, papitas chips",
+      "precio": 16000,
+      "categoria": "perros",
+      "badge": null,
+      "orden": 1,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 13,
+      "nombre": "Kiko",
+      "descripcion": "Salchicha americana, pollo desmechado, tocineta, queso, cebolla",
+      "precio": 18000,
+      "categoria": "perros",
+      "badge": null,
+      "orden": 2,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 14,
+      "nombre": "Don Ramón",
+      "descripcion": "Salchicha americana, pollo desmechado, carne en cuadritos, queso, cebolla",
+      "precio": 20000,
+      "categoria": "perros",
+      "badge": null,
+      "orden": 3,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 15,
+      "nombre": "Perro Bacon 33CM",
+      "descripcion": "Salchicha americana X2, queso costeño, tocineta picada, papitas chips, cebolla",
+      "precio": 22000,
+      "categoria": "perros",
+      "badge": null,
+      "orden": 4,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 16,
+      "nombre": "Ñoño 33CM XXL",
+      "descripcion": "Salchicha americana X2, carne desmechada, pollo desmechado, queso, maíz, tocineta, cebolla",
+      "precio": 25000,
+      "categoria": "perros",
+      "badge": null,
+      "orden": 5,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 17,
+      "nombre": "Peterete",
+      "descripcion": "2 salchichas americanas, pollo desmechado, pepperoni, queso, cebolla",
+      "precio": 25000,
+      "categoria": "perros",
+      "badge": null,
+      "orden": 6,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 18,
+      "nombre": "Chimostrufia 33CM",
+      "descripcion": "Salchicha americana X2, carne de hamburguesa picada, maíz, pico de gallo, guacamole, nachos, jalapeños, queso fundido",
+      "precio": 28000,
+      "categoria": "perros",
+      "badge": "popular",
+      "orden": 7,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 19,
+      "nombre": "Matolote 33CM XXL",
+      "descripcion": "Salchicha americana X2, carne y pollo en cuadritos, queso, tocineta X2, cebolla",
+      "precio": 32000,
+      "categoria": "perros",
+      "badge": "premium",
+      "orden": 8,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 20,
+      "nombre": "Chompiras",
+      "descripcion": "2 salchichas zenú, queso fundido, queso costeño",
+      "precio": 16000,
+      "categoria": "salchipapas",
+      "badge": null,
+      "orden": 1,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 21,
+      "nombre": "Chaparrón",
+      "descripcion": "Chorizo X2, queso fundido, queso costeño",
+      "precio": 17000,
+      "categoria": "salchipapas",
+      "badge": null,
+      "orden": 2,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 22,
+      "nombre": "Chompiras Especial",
+      "descripcion": "2 salchichas zenú, pollo desmechado, queso costeño, queso fundido, vegetales, papitas chips",
+      "precio": 19000,
+      "categoria": "salchipapas",
+      "badge": null,
+      "orden": 3,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 23,
+      "nombre": "Chaparrón Especial",
+      "descripcion": "2 chorizos, pollo desmechado, papitas chips, vegetales, queso costeño, queso fundido",
+      "precio": 20000,
+      "categoria": "salchipapas",
+      "badge": null,
+      "orden": 4,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 24,
+      "nombre": "Chanfle",
+      "descripcion": "Salchicha americana, chorizo, carne de hamburguesa picada, queso fundido, tocineta picada, quesos",
+      "precio": 25000,
+      "categoria": "salchipapas",
+      "badge": null,
+      "orden": 5,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 25,
+      "nombre": "Doña Nieves",
+      "descripcion": "Chorizo, salchicha americana, pollo desmechado, quesos, maíz, pepperoni, cebolla",
+      "precio": 25000,
+      "categoria": "salchipapas",
+      "badge": "nuevo",
+      "orden": 6,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 26,
+      "nombre": "Botija",
+      "descripcion": "Chorizo, pollo y carne desmechados, maíz, quesos, 2 salchichas zenú, tocineta",
+      "precio": 38000,
+      "categoria": "salchipapas",
+      "badge": "premium",
+      "orden": 7,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 27,
+      "nombre": "Papas Lucas",
+      "descripcion": "Carne desmechada, maíz, maduritos, 2 chorizos, quesos, papa a la francesa",
+      "precio": 38000,
+      "categoria": "delicias-chavos",
+      "badge": null,
+      "orden": 1,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 28,
+      "nombre": "Patacón Carne",
+      "descripcion": "Carne desmechada, chorizo, maíz, vegetales, queso fundido, queso costeño, papitas chips. (sin papas a la francesa)",
+      "precio": 20000,
+      "categoria": "delicias-chavos",
+      "badge": null,
+      "orden": 2,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 29,
+      "nombre": "Patacón Ranchero",
+      "descripcion": "Pollo desmechado, vegetales, tocineta, queso fundido, queso costeño, salchicha, papitas chips, maíz. (sin papas a la francesa)",
+      "precio": 20000,
+      "categoria": "delicias-chavos",
+      "badge": null,
+      "orden": 3,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 30,
+      "nombre": "Mexicano",
+      "descripcion": "Carne de hamburguesa picada, carne desmechada, maíz, queso fundido, queso costeño, jalapeños, guacamole, vegetales, nachos",
+      "precio": 25000,
+      "categoria": "delicias-chavos",
+      "badge": "picante",
+      "orden": 4,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 31,
+      "nombre": "Patacón Especial",
+      "descripcion": "Carne y pollo en cuadritos, chorizo, pepperoni, queso fundido, queso costeño, vegetales. (sin papas a la francesa)",
+      "precio": 25000,
+      "categoria": "delicias-chavos",
+      "badge": null,
+      "orden": 5,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 32,
+      "nombre": "Nachos para dos",
+      "descripcion": "Nachos, carne desmechada, tocineta, chorizo premium, carne artesanal, maíz, guacamole, vegetales, queso, papa a la francesa",
+      "precio": 38000,
+      "categoria": "delicias-chavos",
+      "badge": null,
+      "orden": 6,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 33,
+      "nombre": "El Gorgojo",
+      "descripcion": "Pollo desmechado, queso, pepperoni, vegetales",
+      "precio": 16000,
+      "categoria": "sandwich",
+      "badge": null,
+      "orden": 1,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 34,
+      "nombre": "Carneseca",
+      "descripcion": "Carne desmechada, chorizo, maíz, queso, vegetales",
+      "precio": 17000,
+      "categoria": "sandwich",
+      "badge": null,
+      "orden": 2,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 35,
+      "nombre": "Ranchero",
+      "descripcion": "Pollo desmechado, queso fundido, queso costeño, maíz, tocineta, salchicha zenú, papa francesa",
+      "precio": 18000,
+      "categoria": "desgranados",
+      "badge": null,
+      "orden": 1,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 36,
+      "nombre": "Mixto",
+      "descripcion": "Pollo desmechado, queso fundido, queso costeño, maíz, tocineta, carne en cuadritos, papa francesa",
+      "precio": 22000,
+      "categoria": "desgranados",
+      "badge": null,
+      "orden": 2,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 37,
+      "nombre": "De carne",
+      "descripcion": "Carne desmechada, queso fundido, queso costeño, chorizo, maíz, tocineta, papa francesa",
+      "precio": 23000,
+      "categoria": "desgranados",
+      "badge": null,
+      "orden": 3,
+      "visible": true,
+      "imagen": null
+    },
+    {
+      "id": 38,
+      "nombre": "Especial Para 2",
+      "descripcion": "Carne y pollo en cuadros, queso fundido, queso costeño, maíz, tocineta, chorizo, papa francesa",
+      "precio": 37000,
+      "categoria": "desgranados",
+      "badge": "recomendado",
+      "orden": 4,
+      "visible": true,
+      "imagen": null
+    }
+  ],
+  "badges": {
+    "popular": {
+      "texto": "POPULAR",
+      "clase": "popular"
+    },
+    "nuevo": {
+      "texto": "NUEVO",
+      "clase": "nuevo"
+    },
+    "recomendado": {
+      "texto": "⭐ RECOMENDADO",
+      "clase": "recomendado"
+    },
+    "premium": {
+      "texto": "👑 PREMIUM",
+      "clase": "premium-badge"
+    },
+    "picante": {
+      "texto": "🌶️ PICANTE",
+      "clase": "picante"
+    }
+  }
+}
