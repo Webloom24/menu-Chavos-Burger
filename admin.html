@@ -1,388 +1,536 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Chavos Burger</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css">
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h1>🍔 Chavos Admin</h1>
-      <div class="sidebar-header-right">
-        <span class="version">v1.0</span>
-        <button class="btn-close-sidebar" onclick="toggleSidebar()">✕</button>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <a href="#" class="nav-item active" data-section="productos">
-        <span class="nav-icon">📦</span>
-        <span class="nav-text">Productos</span>
-      </a>
-      <a href="#" class="nav-item" data-section="categorias">
-        <span class="nav-icon">📂</span>
-        <span class="nav-text">Categorías</span>
-      </a>
-      <a href="#" class="nav-item" data-section="config">
-        <span class="nav-icon">⚙️</span>
-        <span class="nav-text">Configuración</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-footer">
-      <button class="btn-logout" onclick="cerrarSesion()">
-        🚪 Cerrar Sesión
-      </button>
-      <button class="btn-sync" onclick="sincronizarConSupabase()">
-        🔄 Sincronizar Nube
-      </button>
-      <a href="index.html" class="btn-preview" target="_blank">
-        👁️ Ver Menú
-      </a>
-      <div class="sidebar-footer-secondary">
-        <button class="btn-export" onclick="exportarJSON()">
-          📥 Exportar
-        </button>
-        <button class="btn-import" onclick="document.getElementById('importar-archivo').click()">
-          📤 Importar
-        </button>
-      </div>
-      <input type="file" id="importar-archivo" accept=".json" style="display:none" onchange="importarJSON(event)">
-      <button class="btn-reset" onclick="resetearYSincronizar()">
-        ⚠️ Resetear Datos
-      </button>
-    </div>
-  </aside>
-
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="main-content">
-    <!-- HEADER -->
-    <header class="content-header">
-      <div class="header-left">
-        <button class="btn-menu-toggle" onclick="toggleSidebar()">☰</button>
-        <div class="header-titles">
-          <h2 id="section-title">Gestión de Productos</h2>
-          <p id="section-subtitle">Agrega, edita o elimina productos del menú</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Chavos Burger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/admin.css" />
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>🍔 Chavos Admin</h1>
+        <div class="sidebar-header-right">
+          <span class="version">v1.0</span>
+          <button class="btn-close-sidebar" onclick="toggleSidebar()">✕</button>
         </div>
       </div>
-      <div class="header-right">
-        <button class="btn-save" onclick="guardarCambios()">
-          💾 Guardar Cambios
-        </button>
-        <span class="status-indicator" id="status-indicator">
-          <span class="status-dot"></span>
-          <span class="status-text">Sin cambios</span>
-        </span>
-      </div>
-    </header>
 
-    <!-- SECCIÓN PRODUCTOS -->
-    <section id="section-productos" class="content-section active">
-      <div class="section-header">
-        <div class="filter-group">
-          <select id="filter-categoria" onchange="filtrarProductos()">
-            <option value="">Todas las categorías</option>
-          </select>
-          <input type="text" id="search-productos" placeholder="Buscar producto..." oninput="filtrarProductos()">
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-section="productos">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Productos</span>
+        </a>
+        <a href="#" class="nav-item" data-section="categorias">
+          <span class="nav-icon">📂</span>
+          <span class="nav-text">Categorías</span>
+        </a>
+        <a href="#" class="nav-item" data-section="config">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Configuración</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="cerrarSesion()">
+          🚪 Cerrar Sesión
+        </button>
+        <button class="btn-sync" onclick="sincronizarConSupabase()">
+          🔄 Sincronizar Nube
+        </button>
+        <a href="index.html" class="btn-preview" target="_blank">
+          👁️ Ver Menú
+        </a>
+        <div class="sidebar-footer-secondary">
+          <button class="btn-export" onclick="exportarJSON()">
+            📥 Exportar
+          </button>
+          <button
+            class="btn-import"
+            onclick="document.getElementById('importar-archivo').click()"
+          >
+            📤 Importar
+          </button>
         </div>
-        <button class="btn-primary" onclick="abrirModalProducto()">
-          <span>+</span> Nuevo Producto
+        <input
+          type="file"
+          id="importar-archivo"
+          accept=".json"
+          style="display: none"
+          onchange="importarJSON(event)"
+        />
+        <button class="btn-reset" onclick="resetearYSincronizar()">
+          ⚠️ Resetear Datos
         </button>
       </div>
+    </aside>
 
-      <div class="table-container">
-        <table class="data-table" id="tabla-productos">
-          <thead>
-            <tr>
-              <th width="50">Orden</th>
-              <th width="60">Imagen</th>
-              <th>Nombre</th>
-              <th>Categoría</th>
-              <th width="100">Precio</th>
-              <th width="100">Badge</th>
-              <th width="80">Visible</th>
-              <th width="120">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tbody-productos">
-            <!-- Se llena dinámicamente -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- SECCIÓN CATEGORÍAS -->
-    <section id="section-categorias" class="content-section">
-      <div class="section-header">
-        <h3>Categorías del Menú</h3>
-        <button class="btn-primary" onclick="abrirModalCategoria()">
-          <span>+</span> Nueva Categoría
-        </button>
-      </div>
-
-      <div class="cards-grid" id="grid-categorias">
-        <!-- Se llena dinámicamente -->
-      </div>
-    </section>
-
-    <!-- SECCIÓN CONFIGURACIÓN -->
-    <section id="section-config" class="content-section">
-      <div class="config-form">
-        <h3>Configuración del Restaurante</h3>
-
-        <div class="form-group">
-          <label>Nombre del Restaurante</label>
-          <input type="text" id="config-nombre" placeholder="Chavos Burger">
-        </div>
-
-        <div class="form-group">
-          <label>Slogan</label>
-          <input type="text" id="config-slogan" placeholder="se me chispoteó... pero de lo rica 😋">
-        </div>
-
-        <div class="form-group">
-          <label>WhatsApp (sin espacios ni guiones)</label>
-          <input type="text" id="config-whatsapp" placeholder="573183752974">
-        </div>
-
-        <div class="form-group">
-          <label>Teléfono (mostrar)</label>
-          <input type="text" id="config-telefono" placeholder="318 375 2974">
-        </div>
-
-        <div class="form-group">
-          <label>Horario</label>
-          <input type="text" id="config-horario" placeholder="Lun–Dom: 5:00 PM – 10:30 PM">
-        </div>
-
-        <div class="form-group">
-          <label>Día cerrado</label>
-          <input type="text" id="config-diacerrado" placeholder="Martes">
-        </div>
-
-        <div class="form-group">
-          <label>Desarrollado por</label>
-          <input type="text" id="config-desarrollador" placeholder="Webloom">
-        </div>
-
-        <button class="btn-primary btn-save-config" onclick="guardarConfiguracion()">
-          💾 Guardar Configuración
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <!-- MODAL PRODUCTO -->
-  <div id="modal-producto" class="modal">
-    <div class="modal-content modal-large">
-      <div class="modal-header">
-        <h3 id="modal-producto-titulo">Nuevo Producto</h3>
-        <button class="modal-close" onclick="cerrarModalProducto()">×</button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="producto-id">
-
-        <div class="form-row">
-          <div class="form-group flex-2">
-            <label>Nombre del Producto *</label>
-            <input type="text" id="producto-nombre" placeholder="Ej: Hamburguesa Especial">
-          </div>
-          <div class="form-group flex-1">
-            <label>Precio *</label>
-            <input type="number" id="producto-precio" placeholder="25000" min="0">
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      <!-- HEADER -->
+      <header class="content-header">
+        <div class="header-left">
+          <button class="btn-menu-toggle" onclick="toggleSidebar()">☰</button>
+          <div class="header-titles">
+            <h2 id="section-title">Gestión de Productos</h2>
+            <p id="section-subtitle">
+              Agrega, edita o elimina productos del menú
+            </p>
           </div>
         </div>
+        <div class="header-right">
+          <button class="btn-save" onclick="guardarCambios()">
+            💾 Guardar Cambios
+          </button>
+          <span class="status-indicator" id="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">Sin cambios</span>
+          </span>
+        </div>
+      </header>
 
-        <div class="form-group">
-          <label>Descripción / Ingredientes *</label>
-          <textarea id="producto-descripcion" rows="3" placeholder="Carne 150gr, queso, lechuga, tomate..."></textarea>
+      <!-- SECCIÓN PRODUCTOS -->
+      <section id="section-productos" class="content-section active">
+        <div class="section-header">
+          <div class="filter-group">
+            <select id="filter-categoria" onchange="filtrarProductos()">
+              <option value="">Todas las categorías</option>
+            </select>
+            <input
+              type="text"
+              id="search-productos"
+              placeholder="Buscar producto..."
+              oninput="filtrarProductos()"
+            />
+          </div>
+          <button class="btn-primary" onclick="abrirModalProducto()">
+            <span>+</span> Nuevo Producto
+          </button>
         </div>
 
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label>Categoría *</label>
-            <select id="producto-categoria">
+        <div class="table-container">
+          <table class="data-table" id="tabla-productos">
+            <thead>
+              <tr>
+                <th width="50">Orden</th>
+                <th width="60">Imagen</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th width="100">Precio</th>
+                <th width="100">Badge</th>
+                <th width="80">Visible</th>
+                <th width="120">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-productos">
               <!-- Se llena dinámicamente -->
-            </select>
-          </div>
-          <div class="form-group flex-1">
-            <label>Badge</label>
-            <select id="producto-badge">
-              <option value="">Sin badge</option>
-              <option value="popular">POPULAR</option>
-              <option value="nuevo">NUEVO</option>
-              <option value="recomendado">⭐ RECOMENDADO</option>
-              <option value="premium">👑 PREMIUM</option>
-              <option value="picante">🌶️ PICANTE</option>
-            </select>
-          </div>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECCIÓN CATEGORÍAS -->
+      <section id="section-categorias" class="content-section">
+        <div class="section-header">
+          <h3>Categorías del Menú</h3>
+          <button class="btn-primary" onclick="abrirModalCategoria()">
+            <span>+</span> Nueva Categoría
+          </button>
         </div>
 
-        <div class="form-group">
-          <label>Imagen del Producto</label>
-          <div class="image-upload-container">
-            <div class="image-tabs">
-              <button type="button" class="img-tab active" data-tab="url" onclick="cambiarTabImagen('url')">URL Externa</button>
-              <button type="button" class="img-tab" data-tab="local" onclick="cambiarTabImagen('local')">Ruta Local</button>
-              <button type="button" class="img-tab" data-tab="upload" onclick="cambiarTabImagen('upload')">Subir Archivo</button>
-            </div>
+        <div class="cards-grid" id="grid-categorias">
+          <!-- Se llena dinámicamente -->
+        </div>
+      </section>
 
-            <div class="img-tab-content active" id="tab-url">
-              <input type="text" id="producto-imagen-url" placeholder="https://ejemplo.com/imagen.jpg">
-            </div>
+      <!-- SECCIÓN CONFIGURACIÓN -->
+      <section id="section-config" class="content-section">
+        <div class="config-form">
+          <h3>Configuración del Restaurante</h3>
 
-            <div class="img-tab-content" id="tab-local">
-              <input type="text" id="producto-imagen-local" placeholder="images/mi-producto.jpg">
-              <small>Usa rutas relativas desde la carpeta del proyecto</small>
-            </div>
+          <div class="form-group">
+            <label>Nombre del Restaurante</label>
+            <input type="text" id="config-nombre" placeholder="Chavos Burger" />
+          </div>
 
-            <div class="img-tab-content" id="tab-upload">
-              <input type="file" id="producto-imagen-file" accept="image/*" onchange="previewImagen(event)">
-              <small>Máximo 500KB. Se convertirá a base64.</small>
-            </div>
+          <div class="form-group">
+            <label>Slogan</label>
+            <input
+              type="text"
+              id="config-slogan"
+              placeholder="se me chispoteó... pero de lo rica 😋"
+            />
+          </div>
 
-            <div class="image-preview" id="imagen-preview">
-              <img id="preview-img" src="" alt="Preview">
-              <button type="button" class="btn-remove-img" onclick="eliminarImagen()">×</button>
+          <div class="form-group">
+            <label>WhatsApp (sin espacios ni guiones)</label>
+            <input
+              type="text"
+              id="config-whatsapp"
+              placeholder="573183752974"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Teléfono (mostrar)</label>
+            <input
+              type="text"
+              id="config-telefono"
+              placeholder="318 375 2974"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Horario</label>
+            <input
+              type="text"
+              id="config-horario"
+              placeholder="Lun–Dom: 5:00 PM – 10:30 PM"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Día cerrado</label>
+            <input type="text" id="config-diacerrado" placeholder="Martes" />
+          </div>
+
+          <div class="form-group">
+            <label>Desarrollado por</label>
+            <input
+              type="text"
+              id="config-desarrollador"
+              placeholder="Webloom"
+            />
+          </div>
+
+          <button
+            class="btn-primary btn-save-config"
+            onclick="guardarConfiguracion()"
+          >
+            💾 Guardar Configuración
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- MODAL PRODUCTO -->
+    <div id="modal-producto" class="modal">
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h3 id="modal-producto-titulo">Nuevo Producto</h3>
+          <button class="modal-close" onclick="cerrarModalProducto()">×</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="producto-id" />
+
+          <div class="form-row">
+            <div class="form-group flex-2">
+              <label>Nombre del Producto *</label>
+              <input
+                type="text"
+                id="producto-nombre"
+                placeholder="Ej: Hamburguesa Especial"
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label>Precio *</label>
+              <input
+                type="number"
+                id="producto-precio"
+                placeholder="25000"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Descripción / Ingredientes *</label>
+            <textarea
+              id="producto-descripcion"
+              rows="3"
+              placeholder="Carne 150gr, queso, lechuga, tomate..."
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Categoría *</label>
+              <select id="producto-categoria">
+                <!-- Se llena dinámicamente -->
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label>Badge</label>
+              <select id="producto-badge">
+                <option value="">Sin badge</option>
+                <option value="popular">POPULAR</option>
+                <option value="nuevo">NUEVO</option>
+                <option value="recomendado">⭐ RECOMENDADO</option>
+                <option value="premium">👑 PREMIUM</option>
+                <option value="picante">🌶️ PICANTE</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Imagen del Producto</label>
+            <div class="image-upload-container">
+              <div class="image-tabs">
+                <button
+                  type="button"
+                  class="img-tab active"
+                  data-tab="url"
+                  onclick="cambiarTabImagen('url')"
+                >
+                  URL Externa
+                </button>
+                <button
+                  type="button"
+                  class="img-tab"
+                  data-tab="local"
+                  onclick="cambiarTabImagen('local')"
+                >
+                  Ruta Local
+                </button>
+                <button
+                  type="button"
+                  class="img-tab"
+                  data-tab="upload"
+                  onclick="cambiarTabImagen('upload')"
+                >
+                  Subir Archivo
+                </button>
+              </div>
+
+              <div class="img-tab-content active" id="tab-url">
+                <input
+                  type="text"
+                  id="producto-imagen-url"
+                  placeholder="https://ejemplo.com/imagen.jpg"
+                />
+              </div>
+
+              <div class="img-tab-content" id="tab-local">
+                <input
+                  type="text"
+                  id="producto-imagen-local"
+                  placeholder="images/mi-producto.jpg"
+                />
+                <small>Usa rutas relativas desde la carpeta del proyecto</small>
+              </div>
+
+              <div class="img-tab-content" id="tab-upload">
+                <input
+                  type="file"
+                  id="producto-imagen-file"
+                  accept="image/*"
+                  onchange="previewImagen(event)"
+                />
+                <small>Máximo 500KB. Se convertirá a base64.</small>
+              </div>
+
+              <div class="image-preview" id="imagen-preview">
+                <img id="preview-img" src="" alt="Preview" />
+                <button
+                  type="button"
+                  class="btn-remove-img"
+                  onclick="eliminarImagen()"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Orden</label>
+              <input
+                type="number"
+                id="producto-orden"
+                placeholder="1"
+                min="1"
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label class="checkbox-label">
+                <input type="checkbox" id="producto-visible" checked />
+                <span>Producto Visible</span>
+              </label>
             </div>
           </div>
         </div>
-
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label>Orden</label>
-            <input type="number" id="producto-orden" placeholder="1" min="1">
-          </div>
-          <div class="form-group flex-1">
-            <label class="checkbox-label">
-              <input type="checkbox" id="producto-visible" checked>
-              <span>Producto Visible</span>
-            </label>
-          </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="cerrarModalProducto()">
+            Cancelar
+          </button>
+          <button class="btn-primary" onclick="guardarProducto()">
+            💾 Guardar
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="cerrarModalProducto()">Cancelar</button>
-        <button class="btn-primary" onclick="guardarProducto()">💾 Guardar</button>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL CATEGORÍA -->
-  <div id="modal-categoria" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modal-categoria-titulo">Nueva Categoría</h3>
-        <button class="modal-close" onclick="cerrarModalCategoria()">×</button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" id="categoria-id-edit">
-
-        <div class="form-group">
-          <label>ID (único, sin espacios) *</label>
-          <input type="text" id="categoria-id" placeholder="mi-categoria">
+    <!-- MODAL CATEGORÍA -->
+    <div id="modal-categoria" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-categoria-titulo">Nueva Categoría</h3>
+          <button class="modal-close" onclick="cerrarModalCategoria()">
+            ×
+          </button>
         </div>
+        <div class="modal-body">
+          <input type="hidden" id="categoria-id-edit" />
 
-        <div class="form-group">
-          <label>Nombre *</label>
-          <input type="text" id="categoria-nombre" placeholder="Mi Categoría">
-        </div>
-
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label>Emoji</label>
-            <input type="text" id="categoria-emoji" placeholder="🍔">
+          <div class="form-group">
+            <label>ID (único, sin espacios) *</label>
+            <input type="text" id="categoria-id" placeholder="mi-categoria" />
           </div>
-          <div class="form-group flex-2">
-            <label>Icono (ruta)</label>
-            <input type="text" id="categoria-icono" placeholder="images/icon-mi-categoria.png">
-          </div>
-        </div>
 
-        <div class="form-group">
-          <label>Subtítulo</label>
-          <input type="text" id="categoria-subtitulo" placeholder="Descripción corta de la categoría">
-        </div>
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input
+              type="text"
+              id="categoria-nombre"
+              placeholder="Mi Categoría"
+            />
+          </div>
 
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label>Orden</label>
-            <input type="number" id="categoria-orden" placeholder="1" min="1">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Emoji</label>
+              <input type="text" id="categoria-emoji" placeholder="🍔" />
+            </div>
+            <div class="form-group flex-2">
+              <label>Icono (ruta)</label>
+              <input
+                type="text"
+                id="categoria-icono"
+                placeholder="images/icon-mi-categoria.png"
+              />
+            </div>
           </div>
-          <div class="form-group flex-1">
-            <label class="checkbox-label">
-              <input type="checkbox" id="categoria-visible" checked>
-              <span>Categoría Visible</span>
-            </label>
+
+          <div class="form-group">
+            <label>Subtítulo</label>
+            <input
+              type="text"
+              id="categoria-subtitulo"
+              placeholder="Descripción corta de la categoría"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label>Orden</label>
+              <input
+                type="number"
+                id="categoria-orden"
+                placeholder="1"
+                min="1"
+              />
+            </div>
+            <div class="form-group flex-1">
+              <label class="checkbox-label">
+                <input type="checkbox" id="categoria-visible" checked />
+                <span>Categoría Visible</span>
+              </label>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="cerrarModalCategoria()">Cancelar</button>
-        <button class="btn-primary" onclick="guardarCategoria()">💾 Guardar</button>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="cerrarModalCategoria()">
+            Cancelar
+          </button>
+          <button class="btn-primary" onclick="guardarCategoria()">
+            💾 Guardar
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL CONFIRMACIÓN -->
-  <div id="modal-confirm" class="modal">
-    <div class="modal-content modal-small">
-      <div class="modal-header">
-        <h3>Confirmar Acción</h3>
-        <button class="modal-close" onclick="cerrarModalConfirm()">×</button>
-      </div>
-      <div class="modal-body">
-        <p id="confirm-message">¿Estás seguro de realizar esta acción?</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="cerrarModalConfirm()">Cancelar</button>
-        <button class="btn-danger" id="confirm-btn" onclick="confirmarAccion()">Confirmar</button>
+    <!-- MODAL CONFIRMACIÓN -->
+    <div id="modal-confirm" class="modal">
+      <div class="modal-content modal-small">
+        <div class="modal-header">
+          <h3>Confirmar Acción</h3>
+          <button class="modal-close" onclick="cerrarModalConfirm()">×</button>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-message">¿Estás seguro de realizar esta acción?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="cerrarModalConfirm()">
+            Cancelar
+          </button>
+          <button
+            class="btn-danger"
+            id="confirm-btn"
+            onclick="confirmarAccion()"
+          >
+            Confirmar
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- MODAL LOGIN -->
-  <div id="modal-login" class="modal modal-login">
-    <div class="modal-content modal-small">
-      <div class="modal-header">
-        <h3>🔐 Iniciar Sesión</h3>
-      </div>
-      <div class="modal-body">
-        <p class="login-subtitle">Ingresa tus credenciales para administrar el menú</p>
-
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
+    <!-- MODAL LOGIN -->
+    <div id="modal-login" class="modal modal-login">
+      <div class="modal-content modal-small">
+        <div class="modal-header">
+          <h3>🔐 Iniciar Sesión</h3>
         </div>
+        <div class="modal-body">
+          <p class="login-subtitle">Ingresa tu usuario y contraseña</p>
 
-        <div class="form-group">
-          <label>Contraseña</label>
-          <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+          <div class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              id="login-email"
+              placeholder="tu@email.com"
+              autocomplete="email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Contraseña</label>
+            <input
+              type="password"
+              id="login-password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div id="login-error" class="login-error"></div>
         </div>
-
-        <div id="login-error" class="login-error"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary btn-login-submit" onclick="iniciarSesion()">
-          Iniciar Sesión
-        </button>
+        <div class="modal-footer">
+          <button
+            class="btn-primary btn-login-submit"
+            onclick="iniciarSesion()"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- TOAST NOTIFICATIONS -->
-  <div id="toast-container"></div>
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
 
-  <!-- Scripts -->
-  <script src="js/supabase-config.js"></script>
-  <script src="js/admin.js"></script>
-</body>
+    <!-- Scripts -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
 </html>
