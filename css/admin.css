@@ -173,6 +173,19 @@ button, a, input, select, textarea {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.sidebar-footer-secondary {
+  display: flex;
+  gap: 8px;
+}
+
+.sidebar-footer-secondary button {
+  flex: 1;
+  padding: 10px 8px !important;
+  font-size: 12px !important;
 }
 
 .sidebar-footer button,
@@ -1390,6 +1403,7 @@ button, a, input, select, textarea {
 @media (max-width: 480px) {
   .sidebar {
     width: 100%;
+    overflow-y: auto;
   }
 
   .sidebar.open::before {
@@ -1397,7 +1411,11 @@ button, a, input, select, textarea {
   }
 
   .sidebar-header {
-    padding: 20px 16px;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    background: var(--sidebar-bg);
+    z-index: 10;
   }
 
   .sidebar-header h1 {
@@ -1406,6 +1424,7 @@ button, a, input, select, textarea {
 
   .sidebar-nav {
     padding: 12px 8px;
+    flex: 0 0 auto;
   }
 
   .nav-item {
@@ -1415,12 +1434,19 @@ button, a, input, select, textarea {
   .sidebar-footer {
     padding: 12px 8px;
     gap: 6px;
+    max-height: none;
+    overflow: visible;
+    flex: 0 0 auto;
   }
 
   .sidebar-footer button,
   .sidebar-footer a {
-    padding: 10px 12px;
-    font-size: 12px;
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .sidebar-footer-secondary button {
+    padding: 10px 8px !important;
   }
 
   .content-header {

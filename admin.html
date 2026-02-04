@@ -38,27 +38,26 @@
     </nav>
 
     <div class="sidebar-footer">
-      <button class="btn-export" onclick="exportarJSON()">
-        📥 Exportar Datos
+      <button class="btn-logout" onclick="cerrarSesion()">
+        🚪 Cerrar Sesión
       </button>
-      <button class="btn-import" onclick="document.getElementById('importar-archivo').click()">
-        📤 Importar Datos
-      </button>
-      <input type="file" id="importar-archivo" accept=".json" style="display:none" onchange="importarJSON(event)">
       <button class="btn-sync" onclick="sincronizarConSupabase()">
         🔄 Sincronizar Nube
-      </button>
-      <button class="btn-reset" onclick="resetearYSincronizar()">
-        ⚠️ Resetear Datos
       </button>
       <a href="index.html" class="btn-preview" target="_blank">
         👁️ Ver Menú
       </a>
-      <a href="GUIA-ADMIN.html" class="btn-guide" target="_blank">
-        📖 Guía de uso
-      </a>
-      <button class="btn-logout" onclick="cerrarSesion()">
-        🚪 Cerrar Sesión
+      <div class="sidebar-footer-secondary">
+        <button class="btn-export" onclick="exportarJSON()">
+          📥 Exportar
+        </button>
+        <button class="btn-import" onclick="document.getElementById('importar-archivo').click()">
+          📤 Importar
+        </button>
+      </div>
+      <input type="file" id="importar-archivo" accept=".json" style="display:none" onchange="importarJSON(event)">
+      <button class="btn-reset" onclick="resetearYSincronizar()">
+        ⚠️ Resetear Datos
       </button>
     </div>
   </aside>
